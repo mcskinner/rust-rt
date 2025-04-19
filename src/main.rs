@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 #[derive(Debug, PartialEq)]
 struct Tuple {
     x: f64,
@@ -13,6 +15,19 @@ impl Tuple {
 
     fn is_vector(&self) -> bool {
         return self.w == 0.0;
+    }
+}
+
+impl Add for Tuple {
+    type Output = Tuple;
+
+    fn add(self, other: Tuple) -> Tuple {
+        Tuple {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
+            w: self.w + other.w,
+        }
     }
 }
 
@@ -63,6 +78,13 @@ mod tests {
     fn test_vector() {
         let a = vector(4.0, -4.0, 3.0);
         assert_eq!(a, tuple(4.0, -4.0, 3.0, 0.0));
+    }
+
+    #[test]
+    fn test_adding_two_tuples() {
+        let a1 = tuple(3.0, -2.0, 5.0, 1.0);
+        let a2 = tuple(-2.0, 3.0, 1.0, 0.0);
+        assert_eq!(a1 + a2, tuple(1.0, 1.0, 6.0, 1.0));
     }
 }
 
