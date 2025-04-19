@@ -26,6 +26,10 @@ impl Tuple {
     fn is_vector(&self) -> bool {
         return self.w == 0.0;
     }
+
+    fn magnitude(&self) -> f64 {
+        (self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w).sqrt()
+    }
 }
 
 impl Add for Tuple {
@@ -189,6 +193,36 @@ mod tests {
     fn test_dividing_a_tuple_by_a_scalar() {
         let a = tuple(1.0, -2.0, 3.0, -4.0);
         assert_eq!(a / 2.0, tuple(0.5, -1.0, 1.5, -2.0));
+    }
+
+    #[test]
+    fn computing_the_magnitude_of_vector_100() {
+        let v = vector(1.0, 0.0, 0.0);
+        assert_eq!(v.magnitude(), 1.0);
+    }
+
+    #[test]
+    fn computing_the_magnitude_of_vector_010() {
+        let v = vector(0.0, 1.0, 0.0);
+        assert_eq!(v.magnitude(), 1.0);
+    }
+
+    #[test]
+    fn computing_the_magnitude_of_vector_001() {
+        let v = vector(0.0, 0.0, 1.0);
+        assert_eq!(v.magnitude(), 1.0);
+    }
+
+    #[test]
+    fn computing_the_magnitude_of_vector_123() {
+        let v = vector(1.0, 2.0, 3.0);
+        assert_eq!(v.magnitude(), (14.0 as f64).sqrt());
+    }
+
+    #[test]
+    fn computing_the_magnitude_of_vector_negative_123() {
+        let v = vector(-1.0, -2.0, -3.0);
+        assert_eq!(v.magnitude(), (14.0 as f64).sqrt());
     }
 }
 
