@@ -17,3 +17,14 @@ I started to go with the array type, with a consistent convention of [named dest
 I was betting that destructuring would be rare relative to pure mathematical iteration over the data structure, as is most common with vectors.
 
 But I tried it, and the type system doesn't really seem built for this. So I'm going to a basic struct type.
+
+### Methods or operator overloading
+
+Overloading all the way, especially for this context. And Rust seems to make it super easy.
+
+### Clone or Copy
+
+I needed these for normalization. Normally I go for the more restrictive option, which in this case is Clone.
+But it's allowed to be arbitrarily expensive in implementation, whereas Copy is implicit and uses memcpy.
+
+Easy choice, default to Copy unless there's a strong reason to do otherwise. But implement both as a habit, I guess.
