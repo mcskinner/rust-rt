@@ -1,3 +1,4 @@
+#[derive(Debug, PartialEq)]
 struct Tuple {
     x: f64,
     y: f64,
@@ -17,6 +18,12 @@ impl Tuple {
 
 fn tuple(x: f64, y: f64, z: f64, w: f64) -> Tuple {
     Tuple { x, y, z, w }
+}
+fn point(x: f64, y: f64, z: f64) -> Tuple {
+    tuple(x, y, z, 1.0)
+}
+fn vector(x: f64, y: f64, z: f64) -> Tuple {
+    tuple(x, y, z, 0.0)
 }
 
 #[cfg(test)]
@@ -44,6 +51,18 @@ mod tests {
         assert_eq!(a.w, 0.0);
         assert_eq!(a.is_point(), false);
         assert_eq!(a.is_vector(), true);
+    }
+
+    #[test]
+    fn test_point() {
+        let a = point(4.0, -4.0, 3.0);
+        assert_eq!(a, tuple(4.0, -4.0, 3.0, 1.0));
+    }
+
+    #[test]
+    fn test_vector() {
+        let a = vector(4.0, -4.0, 3.0);
+        assert_eq!(a, tuple(4.0, -4.0, 3.0, 0.0));
     }
 }
 
