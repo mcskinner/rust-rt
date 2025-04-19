@@ -1,6 +1,8 @@
+use approx::assert_abs_diff_eq;
+use approx_derive::AbsDiffEq;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, AbsDiffEq)]
 struct Tuple {
     x: f64,
     y: f64,
@@ -233,6 +235,19 @@ mod tests {
     fn normalizing_vector_400() {
         let v = vector(4.0, 0.0, 0.0);
         assert_eq!(v.normalize(), vector(1.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn normalizing_vector_123() {
+        let v = vector(1.0, 2.0, 3.0);
+        assert_abs_diff_eq!(v.normalize(), vector(0.26726, 0.53452, 0.80178), epsilon = 0.00001);
+    }
+
+    #[test]
+    fn magnitude_of_a_normalized_vector() {
+        let v = vector(1.0, 2.0, 3.0);
+        let norm = v.normalize();
+        assert_eq!(norm.magnitude(), 1.0);
     }
 }
 
