@@ -1,6 +1,6 @@
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 struct Tuple {
     x: f64,
     y: f64,
@@ -29,6 +29,10 @@ impl Tuple {
 
     fn magnitude(&self) -> f64 {
         (self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w).sqrt()
+    }
+
+    fn normalize(&self) -> Tuple {
+        *self / self.magnitude()
     }
 }
 
@@ -223,6 +227,12 @@ mod tests {
     fn computing_the_magnitude_of_vector_negative_123() {
         let v = vector(-1.0, -2.0, -3.0);
         assert_eq!(v.magnitude(), (14.0 as f64).sqrt());
+    }
+
+    #[test]
+    fn normalizing_vector_400() {
+        let v = vector(4.0, 0.0, 0.0);
+        assert_eq!(v.normalize(), vector(1.0, 0.0, 0.0));
     }
 }
 
