@@ -8,6 +8,16 @@ struct Tuple {
     w: f64,
 }
 
+fn tuple(x: f64, y: f64, z: f64, w: f64) -> Tuple {
+    Tuple { x, y, z, w }
+}
+fn point(x: f64, y: f64, z: f64) -> Tuple {
+    tuple(x, y, z, 1.0)
+}
+fn vector(x: f64, y: f64, z: f64) -> Tuple {
+    tuple(x, y, z, 0.0)
+}
+
 impl Tuple {
     fn is_point(&self) -> bool {
         return self.w == 1.0;
@@ -42,16 +52,6 @@ impl Sub for Tuple {
             w: self.w - other.w,
         }
     }
-}
-
-fn tuple(x: f64, y: f64, z: f64, w: f64) -> Tuple {
-    Tuple { x, y, z, w }
-}
-fn point(x: f64, y: f64, z: f64) -> Tuple {
-    tuple(x, y, z, 1.0)
-}
-fn vector(x: f64, y: f64, z: f64) -> Tuple {
-    tuple(x, y, z, 0.0)
 }
 
 #[cfg(test)]
