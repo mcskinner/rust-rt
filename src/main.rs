@@ -1,8 +1,9 @@
 use approx::assert_abs_diff_eq;
 use approx_derive::AbsDiffEq;
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use derive_more::{Add, Sub, Neg};
+use std::ops::{Div, Mul};
 
-#[derive(Debug, Clone, Copy, PartialEq, AbsDiffEq)]
+#[derive(Debug, Clone, Copy, PartialEq, AbsDiffEq, Add, Sub, Neg)]
 struct Tuple {
     x: f64,
     y: f64,
@@ -47,45 +48,6 @@ impl Tuple {
             self.z * other.x - self.x * other.z,
             self.x * other.y - self.y * other.x,
         )
-    }
-}
-
-impl Add for Tuple {
-    type Output = Tuple;
-
-    fn add(self, other: Tuple) -> Tuple {
-        Tuple {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-            w: self.w + other.w,
-        }
-    }
-}
-
-impl Sub for Tuple {
-    type Output = Tuple;
-
-    fn sub(self, other: Tuple) -> Tuple {
-        Tuple {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-            w: self.w - other.w,
-        }
-    }
-}
-
-impl Neg for Tuple {
-    type Output = Tuple;
-
-    fn neg(self) -> Tuple {
-        Tuple {
-            x: -self.x,
-            y: -self.y,
-            z: -self.z,
-            w: -self.w,
-        }
     }
 }
 
