@@ -40,6 +40,14 @@ impl Tuple {
     fn dot(&self, other: &Tuple) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w
     }
+
+    fn cross(&self, other: &Tuple) -> Tuple {
+        vector(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x,
+        )
+    }
 }
 
 impl Add for Tuple {
@@ -259,6 +267,13 @@ mod tests {
         let a = vector(1.0, 2.0, 3.0);
         let b = vector(2.0, 3.0, 4.0);
         assert_eq!(a.dot(&b), 20.0);
+    }
+
+    #[test]
+    fn cross_product_of_two_vectors() {
+        let a = vector(1.0, 2.0, 3.0);
+        let b = vector(2.0, 3.0, 4.0);
+        assert_eq!(a.cross(&b), vector(-1.0, 2.0, -1.0));
     }
 }
 
