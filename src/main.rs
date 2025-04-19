@@ -1,4 +1,4 @@
-use std::ops::Add;
+use std::ops::{Add, Sub};
 
 #[derive(Debug, PartialEq)]
 struct Tuple {
@@ -27,6 +27,19 @@ impl Add for Tuple {
             y: self.y + other.y,
             z: self.z + other.z,
             w: self.w + other.w,
+        }
+    }
+}
+
+impl Sub for Tuple {
+    type Output = Tuple;
+
+    fn sub(self, other: Tuple) -> Tuple {
+        Tuple {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+            w: self.w - other.w,
         }
     }
 }
@@ -85,6 +98,13 @@ mod tests {
         let a1 = tuple(3.0, -2.0, 5.0, 1.0);
         let a2 = tuple(-2.0, 3.0, 1.0, 0.0);
         assert_eq!(a1 + a2, tuple(1.0, 1.0, 6.0, 1.0));
+    }
+
+    #[test]
+    fn test_subtracting_two_points() {
+        let p1 = point(3.0, 2.0, 1.0);
+        let p2 = point(5.0, 6.0, 7.0);
+        assert_eq!(p1 - p2, vector(-2.0, -4.0, -6.0));
     }
 }
 
