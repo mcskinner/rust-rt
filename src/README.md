@@ -28,3 +28,10 @@ I needed these for normalization. Normally I go for the more restrictive option,
 But it's allowed to be arbitrarily expensive in implementation, whereas Copy is implicit and uses memcpy.
 
 Easy choice, default to Copy unless there's a strong reason to do otherwise. But implement both as a habit, I guess.
+
+### Endnotes
+
+I'm surprised how much Github Copilot is doing for me. I mean, I guess not really since this has been out there awhile.
+And I gotta say, it's a pleasant surprise. I've spent enough time keying in code from books over the years.
+This way I can focus on reviewing the correctness and learning the language idioms at a higher level.
+Like I said, pleasant surprise.
