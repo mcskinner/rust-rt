@@ -1,4 +1,4 @@
-use std::ops::{Add, Neg, Sub};
+use std::ops::{Add, Mul, Neg, Sub};
 
 #[derive(Debug, PartialEq)]
 struct Tuple {
@@ -63,6 +63,19 @@ impl Neg for Tuple {
             y: -self.y,
             z: -self.z,
             w: -self.w,
+        }
+    }
+}
+
+impl Mul<f64> for Tuple {
+    type Output = Tuple;
+
+    fn mul(self, scalar: f64) -> Tuple {
+        Tuple {
+            x: self.x * scalar,
+            y: self.y * scalar,
+            z: self.z * scalar,
+            w: self.w * scalar,
         }
     }
 }
@@ -145,6 +158,18 @@ mod tests {
     fn test_negating_a_tuple() {
         let a = tuple(1.0, -2.0, 3.0, -4.0);
         assert_eq!(-a, tuple(-1.0, 2.0, -3.0, 4.0));
+    }
+
+    #[test]
+    fn test_multiplying_a_tuple_by_a_scalar() {
+        let a = tuple(1.0, -2.0, 3.0, -4.0);
+        assert_eq!(a * 3.5, tuple(3.5, -7.0, 10.5, -14.0));
+    }
+
+    #[test]
+    fn test_multiplying_a_tuple_by_a_fraction() {
+        let a = tuple(1.0, -2.0, 3.0, -4.0);
+        assert_eq!(a * 0.5, tuple(0.5, -1.0, 1.5, -2.0));
     }
 }
 
