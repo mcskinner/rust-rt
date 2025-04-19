@@ -36,6 +36,10 @@ impl Tuple {
     fn normalize(&self) -> Tuple {
         *self / self.magnitude()
     }
+
+    fn dot(&self, other: &Tuple) -> f64 {
+        self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w
+    }
 }
 
 impl Add for Tuple {
@@ -248,6 +252,13 @@ mod tests {
         let v = vector(1.0, 2.0, 3.0);
         let norm = v.normalize();
         assert_eq!(norm.magnitude(), 1.0);
+    }
+
+    #[test]
+    fn dot_product_of_two_tuples() {
+        let a = vector(1.0, 2.0, 3.0);
+        let b = vector(2.0, 3.0, 4.0);
+        assert_eq!(a.dot(&b), 20.0);
     }
 }
 
