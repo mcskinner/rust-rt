@@ -11,6 +11,16 @@ pub fn canvas(width: usize, height: usize) -> Canvas {
     Canvas { width, height, pixels }
 }
 
+impl Canvas {
+    pub fn pixel_at(&self, x: usize, y: usize) -> Color {
+        self.pixels[y][x]
+    }
+
+    pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
+        self.pixels[y][x] = color;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -26,5 +36,13 @@ mod tests {
                 assert_eq!(c.pixels[y][x], color(0.0, 0.0, 0.0));
             }
         }
+    }
+
+    #[test]
+    fn test_write_pixel() {
+        let mut c = canvas(10, 20);
+        let red = color(1.0, 0.0, 0.0);
+        c.write_pixel(2, 3, red);
+        assert_eq!(c.pixel_at(2, 3), red);
     }
 }
