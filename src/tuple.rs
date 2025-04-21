@@ -21,27 +21,27 @@ pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
 }
 
 impl Tuple {
-    fn is_point(&self) -> bool {
+    pub fn is_point(&self) -> bool {
         return self.w == 1.0;
     }
 
-    fn is_vector(&self) -> bool {
+    pub fn is_vector(&self) -> bool {
         return self.w == 0.0;
     }
 
-    fn magnitude(&self) -> f64 {
+    pub fn magnitude(&self) -> f64 {
         self.dot(self).sqrt()
     }
 
-    fn normalize(&self) -> Tuple {
+    pub fn normalize(&self) -> Tuple {
         *self / self.magnitude()
     }
 
-    fn dot(&self, other: &Tuple) -> f64 {
+    pub fn dot(&self, other: &Tuple) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w
     }
 
-    fn cross(&self, other: &Tuple) -> Tuple {
+    pub fn cross(&self, other: &Tuple) -> Tuple {
         vector(
             self.y * other.z - self.z * other.y,
             self.z * other.x - self.x * other.z,

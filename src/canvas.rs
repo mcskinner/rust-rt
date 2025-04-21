@@ -1,8 +1,8 @@
 use crate::color::{color, Color};
 
 pub struct Canvas {
-    width: usize,
-    height: usize,
+    pub width: usize,
+    pub height: usize,
     pixels: Vec<Vec<Color>>,
 }
 
@@ -17,7 +17,9 @@ impl Canvas {
     }
 
     pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
-        self.pixels[y][x] = color;
+        if x < self.width && y < self.height {
+            self.pixels[y][x] = color;
+        }
     }
 
     pub fn to_ppm(&self) -> String {
@@ -30,7 +32,7 @@ impl Canvas {
             for pixel in row {
                 for color in [pixel.red, pixel.green, pixel.blue] {
                     if line.len() > 0 {
-                        line.push(" ");
+                        line.push(' ');
                     }
                     let value = &format!("{}", (color * 255.0).round() as u8);
 
