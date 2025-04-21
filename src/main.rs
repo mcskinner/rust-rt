@@ -1,3 +1,4 @@
+mod color;
 mod tuple;
 use tuple::{point, vector, Tuple};
 
