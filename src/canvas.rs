@@ -28,13 +28,25 @@ impl Canvas {
         for row in &self.pixels {
             let mut line = String::new();
             for pixel in row {
-                line.push_str(&format!("{} {} {} ", (pixel.red * 255.0).round() as u8, (pixel.green * 255.0).round() as u8, (pixel.blue * 255.0).round() as u8));
+                for color in [pixel.red, pixel.green, pixel.blue] {
+                    if line.len() > 0 {
+                        line.push(" ");
+                    }
+                    let value = &format!("{}", (color * 255.0).round() as u8);
+
+                    if line.len() + value.len() > 70 {
+                        line.pop();
+                        ppm.push_str(&line);
+                        ppm.push('\n');
+                        line.clear();
+                    }
+                    line.push_str(value);
+                }
             }
             if !line.is_empty() {
-                line.pop();
+                ppm.push_str(&line);
+                ppm.push('\n');
             }
-            ppm.push_str(&line);
-            ppm.push('\n');
         }
         ppm
     }
@@ -87,5 +99,20 @@ mod tests {
         assert_eq!(ppm.lines().nth(3).unwrap(), "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0");
         assert_eq!(ppm.lines().nth(4).unwrap(), "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0");
         assert_eq!(ppm.lines().nth(5).unwrap(), "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255");
+    }
+
+    #[test]
+    fn test_ppm_long_lines() {
+        let mut c = canvas(10, 2);
+        for i in 0..10 {
+            for j in 0..2 {
+                c.write_pixel(i, j, color(1.0, 0.8, 0.6));
+            }
+        }
+        let ppm = c.to_ppm();
+        assert_eq!(ppm.lines().nth(3).unwrap(), "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204");
+        assert_eq!(ppm.lines().nth(4).unwrap(), "153 255 204 153 255 204 153 255 204 153 255 204 153");
+        assert_eq!(ppm.lines().nth(5).unwrap(), "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204");
+        assert_eq!(ppm.lines().nth(6).unwrap(), "153 255 204 153 255 204 153 255 204 153 255 204 153");
     }
 }
