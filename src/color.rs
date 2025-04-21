@@ -1,9 +1,8 @@
 use approx::assert_abs_diff_eq;
 use approx_derive::AbsDiffEq;
-use derive_more::{Add, Sub};
-use std::ops::{Mul};
+use derive_more::{Add, Sub, Mul};
 
-#[derive(Debug, Clone, Copy, PartialEq, AbsDiffEq, Add, Sub)]
+#[derive(Debug, Clone, Copy, PartialEq, AbsDiffEq, Add, Sub, Mul)]
 pub struct Color {
     red: f64,
     green: f64,
@@ -12,18 +11,6 @@ pub struct Color {
 
 pub fn color(red: f64, green: f64, blue: f64) -> Color {
     Color { red, green, blue }
-}
-
-impl Mul<f64> for Color {
-    type Output = Color;
-
-    fn mul(self, scalar: f64) -> Color {
-        color(
-            self.red * scalar,
-            self.green * scalar,
-            self.blue * scalar,
-        )
-    }
 }
 
 #[cfg(test)]
