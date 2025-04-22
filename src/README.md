@@ -35,3 +35,29 @@ I'm surprised how much Github Copilot is doing for me. I mean, I guess not reall
 And I gotta say, it's a pleasant surprise. I've spent enough time keying in code from books over the years.
 This way I can focus on reviewing the correctness and learning the language idioms at a higher level.
 Like I said, pleasant surprise.
+
+# Chapter 2
+
+### New type for Color
+
+The alternative is to reuse some base implementation for both Tuple and Color.
+
+I opted for a new type, since the derived traits do most of the work anyway. The names are convenient enough to keep.
+
+### Dealing with the PPM formatting specifics
+
+I was tempted to just write one pixel per line, because it's simple and also follows the 70 character constraint. I also considered keeping colors together, not splitting them with line breaks.
+
+In the end I stuck with fidelity to the test case as written in the book, as a challenge to see if I could write it cleanly.
+
+It's okay, not my favorite bit of code. In a real production system I'd bias towards changing the tests to be less prescriptive, i.e. only checking the 70 character constraint and pixel ordering correctness, without so much concern for exactly where the line breaks are. That is, the test should cover the boundaries, but should not introduce tighter implementation constraints than strictly required (as this one does).
+
+# Chapter 3
+
+### Types for matrices
+
+In this case I had to go with `Vec<Vec<f64>>`, since arrays are fixed size and NxM individual variable names gets out of hand.
+
+I didn't realize there was an `ndarray::arr2` I could have used until I was halfway through. There's even a [cookbook for linear algebra](https://rust-lang-nursery.github.io/rust-cookbook/science/mathematics/linear_algebra.html) that uses it to cover what I've been doing the harder way.
+
+I'll continue with my by-hand implementation, but will consider refactoring later.
