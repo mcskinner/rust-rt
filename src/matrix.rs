@@ -67,4 +67,21 @@ mod tests {
         ]);
         assert_eq!(m1, m2);
     }
+
+    #[test]
+    fn test_matrix_inequality() {
+        let m1 = Matrix::from_vec(vec![
+            vec![1.0, 2.0, 3.0, 4.0],
+            vec![5.0, 6.0, 7.0, 8.0],
+            vec![9.0, 8.0, 7.0, 6.0],
+            vec![5.0, 4.0, 3.0, 2.0],
+        ]);
+        let m2 = Matrix::from_vec(vec![
+            vec![2.0, 3.0, 4.0, 5.0],
+            vec![6.0, 7.0, 8.0, 9.0],
+            vec![8.0, 7.0, 6.0, 5.0],
+            vec![4.0, 3.0, 2.0, 1.0],
+        ]);
+        assert_ne!(m1, m2);
+    }
 }
