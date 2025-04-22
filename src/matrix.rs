@@ -28,4 +28,25 @@ mod tests {
         assert_eq!(m.data[3][0], 13.5);
         assert_eq!(m.data[3][2], 15.5);
     }
+
+    #[test]
+    fn test_a_2x2_matrix() {
+        let m = Matrix::from_vec(vec![vec![-3.0, 5.0], vec![1.0, -2.0]]);
+        assert_eq!(m.data[0][0], -3.0);
+        assert_eq!(m.data[0][1], 5.0);
+        assert_eq!(m.data[1][0], 1.0);
+        assert_eq!(m.data[1][1], -2.0);
+    }
+
+    #[test]
+    fn test_a_3x3_matrix() {
+        let m = Matrix::from_vec(vec![
+            vec![-3.0, 5.0, 0.0],
+            vec![1.0, -2.0, -7.0],
+            vec![0.0, 1.0, 1.0],
+        ]);
+        assert_eq!(m.data[0][0], -3.0);
+        assert_eq!(m.data[1][1], -2.0);
+        assert_eq!(m.data[2][2], 1.0);
+    }
 }
