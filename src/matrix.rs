@@ -33,6 +33,20 @@ impl Matrix {
         assert_eq!(self.data[0].len(), 1, "Matrix must have exactly one column to convert to Tuple");
         tuple(self.data[0][0], self.data[1][0], self.data[2][0], self.data[3][0])
     }
+
+    fn transpose(&self) -> Matrix {
+        let rows = self.data.len();
+        let cols = self.data[0].len();
+        
+        let mut transposed = vec![vec![0.0; rows]; cols];
+
+        for i in 0..rows {
+            for j in 0..cols {
+                transposed[j][i] = self.data[i][j];
+            }
+        }
+        Matrix::from_vec(transposed)
+    }
 }
 
 impl Mul for Matrix {
@@ -189,5 +203,22 @@ mod tests {
         let b = Matrix::identity(4);
         let expected = a.clone();
         assert_eq!(a * b, expected);
+    }
+
+    #[test]
+    fn test_transposing_a_matrix() {
+        let m = Matrix::from_vec(vec![
+            vec![0.0, 9.0, 3.0, 0.0],
+            vec![9.0, 8.0, 0.0, 8.0],
+            vec![1.0, 8.0, 5.0, 3.0],
+            vec![0.0, 0.0, 5.0, 8.0],
+        ]);
+        let expected = Matrix::from_vec(vec![
+            vec![0.0, 9.0, 1.0, 0.0],
+            vec![9.0, 8.0, 8.0, 0.0],
+            vec![3.0, 0.0, 5.0, 5.0],
+            vec![0.0, 8.0, 3.0, 8.0],
+        ]);
+        assert_eq!(m.transpose(), expected);
     }
 }
