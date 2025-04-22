@@ -1,7 +1,7 @@
 use crate::tuple::{tuple, Tuple};
 use std::ops::Mul;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 struct Matrix {
     data: Vec<Vec<f64>>,
 }
@@ -9,6 +9,14 @@ struct Matrix {
 impl Matrix {
     fn from_vec(data: Vec<Vec<f64>>) -> Matrix {
         Matrix { data }
+    }
+
+    fn identity(size: usize) -> Matrix {
+        let mut data = vec![vec![0.0; size]; size];
+        for i in 0..size {
+            data[i][i] = 1.0;
+        }
+        Matrix::from_vec(data)
     }
 
     fn from_tuple(t: &Tuple) -> Matrix {
@@ -168,5 +176,18 @@ mod tests {
         ]);
         let t = tuple(1.0, 2.0, 3.0, 1.0);
         assert_eq!(m * t, tuple(18.0, 24.0, 33.0, 1.0));
+    }
+
+    #[test]
+    fn test_matrix_multiplied_by_identity() {
+        let a = Matrix::from_vec(vec![
+            vec![0.0, 1.0, 2.0, 4.0],
+            vec![1.0, 2.0, 4.0, 8.0],
+            vec![2.0, 4.0, 8.0, 16.0],
+            vec![4.0, 8.0, 16.0, 32.0],
+        ]);
+        let b = Matrix::identity(4);
+        let expected = a.clone();
+        assert_eq!(a * b, expected);
     }
 }
