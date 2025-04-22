@@ -1,3 +1,4 @@
+#[derive(Debug, PartialEq)]
 struct Matrix {
     data: Vec<Vec<f64>>,
 }
@@ -48,5 +49,22 @@ mod tests {
         assert_eq!(m.data[0][0], -3.0);
         assert_eq!(m.data[1][1], -2.0);
         assert_eq!(m.data[2][2], 1.0);
+    }
+
+    #[test]
+    fn test_matrix_equality() {
+        let m1 = Matrix::from_vec(vec![
+            vec![1.0, 2.0, 3.0, 4.0],
+            vec![5.0, 6.0, 7.0, 8.0],
+            vec![9.0, 8.0, 7.0, 6.0],
+            vec![5.0, 4.0, 3.0, 2.0],
+        ]);
+        let m2 = Matrix::from_vec(vec![
+            vec![1.0, 2.0, 3.0, 4.0],
+            vec![5.0, 6.0, 7.0, 8.0],
+            vec![9.0, 8.0, 7.0, 6.0],
+            vec![5.0, 4.0, 3.0, 2.0],
+        ]);
+        assert_eq!(m1, m2);
     }
 }
