@@ -10,7 +10,7 @@ pub struct Tuple {
     pub w: f64,
 }
 
-fn tuple(x: f64, y: f64, z: f64, w: f64) -> Tuple {
+pub fn tuple(x: f64, y: f64, z: f64, w: f64) -> Tuple {
     Tuple { x, y, z, w }
 }
 pub fn point(x: f64, y: f64, z: f64) -> Tuple {

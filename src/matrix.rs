@@ -1,3 +1,4 @@
+use crate::tuple::{tuple, Tuple};
 use std::ops::Mul;
 
 #[derive(Debug, PartialEq)]
@@ -8,6 +9,21 @@ struct Matrix {
 impl Matrix {
     fn from_vec(data: Vec<Vec<f64>>) -> Matrix {
         Matrix { data }
+    }
+
+    fn from_tuple(t: &Tuple) -> Matrix {
+        Matrix::from_vec(vec![
+            vec![t.x],
+            vec![t.y],
+            vec![t.z],
+            vec![t.w],
+        ])
+    }
+
+    fn to_tuple(&self) -> Tuple {
+        assert_eq!(self.data.len(), 4, "Matrix must have exactly four rows to convert to Tuple");
+        assert_eq!(self.data[0].len(), 1, "Matrix must have exactly one column to convert to Tuple");
+        tuple(self.data[0][0], self.data[1][0], self.data[2][0], self.data[3][0])
     }
 }
 
@@ -20,8 +36,8 @@ impl Mul for Matrix {
         let n = other.data[0].len();
         assert_eq!(m, other.data.len(), "Matrix dimensions do not match for multiplication");
 
-        let mut result = vec![vec![0.0; l]; n];
-
+        let mut result = vec![vec![0.0; n]; l];
+        
         for i in 0..l {
             for j in 0..m {
                 for k in 0..n {
@@ -31,6 +47,15 @@ impl Mul for Matrix {
         }
 
         Matrix::from_vec(result)
+    }
+}
+
+impl Mul<Tuple> for Matrix {
+    type Output = Tuple;
+
+    fn mul(self, other: Tuple) -> Tuple {
+        let result = self * Matrix::from_tuple(&other);
+        result.to_tuple()
     }
 }
 
@@ -131,5 +156,17 @@ mod tests {
             vec![16.0, 26.0, 46.0, 42.0],
         ]);
         assert_eq!(a * b, expected);
+    }
+
+    #[test]
+    fn test_matrix_multiplied_by_a_tuple() {
+        let m = Matrix::from_vec(vec![
+            vec![1.0, 2.0, 3.0, 4.0],
+            vec![2.0, 4.0, 4.0, 2.0],
+            vec![8.0, 6.0, 4.0, 1.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ]);
+        let t = tuple(1.0, 2.0, 3.0, 1.0);
+        assert_eq!(m * t, tuple(18.0, 24.0, 33.0, 1.0));
     }
 }
