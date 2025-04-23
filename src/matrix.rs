@@ -340,4 +340,19 @@ mod tests {
         assert_eq!(m.cofactor(0, 2), -46.0);
         assert_eq!(m.determinant(), -196.0);
     }
+
+    #[test]
+    fn test_determinant_of_a_4x4_matrix() {
+        let m = Matrix::from_vec(vec![
+            vec![-2.0, -8.0, 3.0, 5.0],
+            vec![-3.0, 1.0, 7.0, 3.0],
+            vec![1.0, 2.0, -9.0, 6.0],
+            vec![-6.0, 7.0, 7.0, -9.0],
+        ]);
+        assert_eq!(m.cofactor(0, 0), 690.0);
+        assert_eq!(m.cofactor(0, 1), 447.0);
+        assert_eq!(m.cofactor(0, 2), 210.0);
+        assert_eq!(m.cofactor(0, 3), 51.0);
+        assert_eq!(m.determinant(), -4071.0);
+    }
 }
