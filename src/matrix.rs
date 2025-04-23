@@ -479,4 +479,16 @@ mod tests {
         ]);
         assert_abs_diff_eq!(i, expected, epsilon = 0.00001);
     }
+
+    #[test]
+    fn test_multiplying_a_matrix_by_its_inverse() {
+        let m = Matrix::from_vec(vec![
+            vec![3.0, -9.0, 7.0, 3.0],
+            vec![3.0, -8.0, 2.0, -9.0],
+            vec![-4.0, 4.0, 4.0, 1.0],
+            vec![-6.0, 5.0, -1.0, 1.0],
+        ]);
+        let i = m.inverse();
+        assert_abs_diff_eq!(m * i, Matrix::identity(4));
+    }
 }
