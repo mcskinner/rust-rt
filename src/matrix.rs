@@ -47,6 +47,12 @@ impl Matrix {
         }
         Matrix::from_vec(transposed)
     }
+
+    fn determinant(&self) -> f64 {
+        assert_eq!(self.data.len(), 2, "Determinant is only defined for 2x2 matrices");
+        assert_eq!(self.data[0].len(), 2, "Determinant is only defined for 2x2 matrices");
+        self.data[0][0] * self.data[1][1] - self.data[0][1] * self.data[1][0]
+    }
 }
 
 impl Mul for Matrix {
@@ -220,5 +226,11 @@ mod tests {
             vec![0.0, 8.0, 3.0, 8.0],
         ]);
         assert_eq!(m.transpose(), expected);
+    }
+
+    #[test]
+    fn test_calculating_determinant_of_a_2x2_matrix() {
+        let m = Matrix::from_vec(vec![vec![1.0, 5.0], vec![-3.0, 2.0]]);
+        assert_eq!(m.determinant(), 17.0);
     }
 }
