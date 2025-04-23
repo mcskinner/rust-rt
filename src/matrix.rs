@@ -49,9 +49,16 @@ impl Matrix {
     }
 
     fn determinant(&self) -> f64 {
-        assert_eq!(self.data.len(), 2, "Determinant is only defined for 2x2 matrices");
-        assert_eq!(self.data[0].len(), 2, "Determinant is only defined for 2x2 matrices");
-        self.data[0][0] * self.data[1][1] - self.data[0][1] * self.data[1][0]
+        assert_eq!(self.data.len(), self.data[0].len(), "Determinant is only defined for square matrices");
+        if self.data.len() == 2 {
+            return self.data[0][0] * self.data[1][1] - self.data[0][1] * self.data[1][0];
+        }
+
+        let mut result = 0.0;
+        for i in 0..self.data.len() {
+            result += self.cofactor(0, i) * self.data[0][i];
+        }
+        result
     }
 
     fn submatrix(&self, row: usize, col: usize) -> Matrix {
@@ -319,5 +326,18 @@ mod tests {
         assert_eq!(m.cofactor(0, 0), -12.0);
         assert_eq!(m.minor(1, 0), 25.0);
         assert_eq!(m.cofactor(1, 0), -25.0);
+    }
+
+    #[test]
+    fn test_determinant_of_a_3x3_matrix() {
+        let m = Matrix::from_vec(vec![
+            vec![1.0, 2.0, 6.0],
+            vec![-5.0, 8.0, -4.0],
+            vec![2.0, 6.0, 4.0],
+        ]);
+        assert_eq!(m.cofactor(0, 0), 56.0);
+        assert_eq!(m.cofactor(0, 1), 12.0);
+        assert_eq!(m.cofactor(0, 2), -46.0);
+        assert_eq!(m.determinant(), -196.0);
     }
 }
