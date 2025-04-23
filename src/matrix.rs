@@ -1,3 +1,4 @@
+use approx::{assert_abs_diff_eq, AbsDiffEq};
 use crate::tuple::{tuple, Tuple};
 use std::ops::Mul;
 
@@ -94,6 +95,19 @@ impl Matrix {
     fn is_invertible(&self) -> bool {
         self.determinant() != 0.0
     }
+
+    fn inverse(&self) -> Matrix {
+        assert!(self.is_invertible(), "Matrix is not invertible");
+        let det = self.determinant();
+        let mut result = vec![vec![0.0; self.data.len()]; self.data.len()];
+
+        for i in 0..self.data.len() {
+            for j in 0..self.data.len() {
+                result[j][i] = self.cofactor(i, j) / det;
+            }
+        }
+        Matrix::from_vec(result)
+    }
 }
 
 impl Mul for Matrix {
@@ -125,6 +139,28 @@ impl Mul<Tuple> for Matrix {
     fn mul(self, other: Tuple) -> Tuple {
         let result = self * Matrix::from_tuple(&other);
         result.to_tuple()
+    }
+}
+
+impl AbsDiffEq for Matrix {
+    type Epsilon = f64;
+
+    fn default_epsilon() -> Self::Epsilon {
+        1e-10
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
+        if self.data.len() != other.data.len() || self.data[0].len() != other.data[0].len() {
+            return false;
+        }
+        for i in 0..self.data.len() {
+            for j in 0..self.data[i].len() {
+                if (self.data[i][j] - other.data[i][j]).abs() > epsilon {
+                    return false;
+                }
+            }
+        }
+        true
     }
 }
 
@@ -382,5 +418,29 @@ mod tests {
         ]);
         assert_eq!(m.determinant(), 0.0);
         assert_eq!(m.is_invertible(), false);
+    }
+
+    #[test]
+    fn test_inverse_of_a_matrix() {
+        let m = Matrix::from_vec(vec![
+            vec![-5.0, 2.0, 6.0, -8.0],
+            vec![1.0, -5.0, 1.0, 8.0],
+            vec![7.0, 7.0, -6.0, -7.0],
+            vec![1.0, -3.0, 7.0, 4.0],
+        ]);
+        let i = m.inverse();
+        assert_eq!(m.determinant(), 532.0);
+        assert_eq!(m.cofactor(2, 3), -160.0);
+        assert_eq!(i.data[3][2], -160.0 / 532.0);
+        assert_eq!(m.cofactor(3, 2), 105.0);
+        assert_eq!(i.data[2][3], 105.0 / 532.0);
+
+        let expected = Matrix::from_vec(vec![
+            vec![0.21805, 0.45113, 0.24060, -0.04511],
+            vec![-0.80827, -1.45677, -0.44361, 0.52068],
+            vec![-0.07895, -0.22368, -0.05263, 0.19737],
+            vec![-0.52256, -0.81391, -0.30075, 0.30639],
+        ]);
+        assert_abs_diff_eq!(i, expected, epsilon = 0.00001);
     }
 }
