@@ -90,6 +90,10 @@ impl Matrix {
             -minor
         }
     }
+
+    fn is_invertible(&self) -> bool {
+        self.determinant() != 0.0
+    }
 }
 
 impl Mul for Matrix {
@@ -354,5 +358,29 @@ mod tests {
         assert_eq!(m.cofactor(0, 2), 210.0);
         assert_eq!(m.cofactor(0, 3), 51.0);
         assert_eq!(m.determinant(), -4071.0);
+    }
+
+    #[test]
+    fn test_an_invertible_matrix_for_invertibility() {
+        let m = Matrix::from_vec(vec![
+            vec![6.0, 4.0, 4.0, 4.0],
+            vec![5.0, 5.0, 7.0, 6.0],
+            vec![4.0, -9.0, 3.0, -7.0],
+            vec![9.0, 1.0, 7.0, -6.0],
+        ]);
+        assert_eq!(m.determinant(), -2120.0);
+        assert_eq!(m.is_invertible(), true);
+    }
+
+    #[test]
+    fn test_a_non_invertible_matrix_for_invertibility() {
+        let m = Matrix::from_vec(vec![
+            vec![-4.0, 2.0, -2.0, -3.0],
+            vec![9.0, 6.0, 2.0, 6.0],
+            vec![1.0, -5.0, 1.0, -5.0],
+            vec![0.0, 0.0, 0.0, 0.0],
+        ]);
+        assert_eq!(m.determinant(), 0.0);
+        assert_eq!(m.is_invertible(), false);
     }
 }
