@@ -53,6 +53,22 @@ impl Matrix {
         assert_eq!(self.data[0].len(), 2, "Determinant is only defined for 2x2 matrices");
         self.data[0][0] * self.data[1][1] - self.data[0][1] * self.data[1][0]
     }
+
+    fn submatrix(&self, row: usize, col: usize) -> Matrix {
+        let mut submatrix = Vec::new();
+        for i in 0..self.data.len() {
+            if i != row {
+                let mut new_row = Vec::new();
+                for j in 0..self.data[i].len() {
+                    if j != col {
+                        new_row.push(self.data[i][j]);
+                    }
+                }
+                submatrix.push(new_row);
+            }
+        }
+        Matrix::from_vec(submatrix)
+    }
 }
 
 impl Mul for Matrix {
@@ -232,5 +248,37 @@ mod tests {
     fn test_calculating_determinant_of_a_2x2_matrix() {
         let m = Matrix::from_vec(vec![vec![1.0, 5.0], vec![-3.0, 2.0]]);
         assert_eq!(m.determinant(), 17.0);
+    }
+
+    #[test]
+    fn test_submatrix_of_3x3_matrix() {
+        let m = Matrix::from_vec(vec![
+            vec![1.0, 5.0, 0.0],
+            vec![-3.0, 2.0, 7.0],
+            vec![0.0, 6.0, -3.0],
+        ]);
+        let submatrix = m.submatrix(0, 2);
+        let expected = Matrix::from_vec(vec![
+            vec![-3.0, 2.0],
+            vec![0.0, 6.0],
+        ]);
+        assert_eq!(submatrix, expected);
+    }
+
+    #[test]
+    fn test_submatrix_of_4x4_matrix() {
+        let m = Matrix::from_vec(vec![
+            vec![-6.0, 1.0, 1.0, 6.0],
+            vec![-8.0, 5.0, 8.0, 6.0],
+            vec![-1.0, 0.0, 8.0, 2.0],
+            vec![-7.0, 1.0, -1.0, 1.0],
+        ]);
+        let submatrix = m.submatrix(2, 1);
+        let expected = Matrix::from_vec(vec![
+            vec![-6.0, 1.0, 6.0],
+            vec![-8.0, 8.0, 6.0],
+            vec![-7.0, -1.0, 1.0],
+        ]);
+        assert_eq!(submatrix, expected);
     }
 }
