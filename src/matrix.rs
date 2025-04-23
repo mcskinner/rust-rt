@@ -69,6 +69,11 @@ impl Matrix {
         }
         Matrix::from_vec(submatrix)
     }
+
+    fn minor(&self, row: usize, col: usize) -> f64 {
+        let submatrix = self.submatrix(row, col);
+        submatrix.determinant()
+    }
 }
 
 impl Mul for Matrix {
@@ -280,5 +285,17 @@ mod tests {
             vec![-7.0, -1.0, 1.0],
         ]);
         assert_eq!(submatrix, expected);
+    }
+
+    #[test]
+    fn test_minor_of_a_3x3_matrix() {
+        let m = Matrix::from_vec(vec![
+            vec![3.0, 5.0, 0.0],
+            vec![2.0, -1.0, -7.0],
+            vec![6.0, -1.0, 5.0],
+        ]);
+        let s = m.submatrix(1, 0);
+        assert_eq!(s.determinant(), 25.0);
+        assert_eq!(m.minor(1, 0), 25.0);
     }
 }
