@@ -74,6 +74,15 @@ impl Matrix {
         let submatrix = self.submatrix(row, col);
         submatrix.determinant()
     }
+
+    fn cofactor(&self, row: usize, col: usize) -> f64 {
+        let minor = self.minor(row, col);
+        if (row + col) % 2 == 0 {
+            minor
+        } else {
+            -minor
+        }
+    }
 }
 
 impl Mul for Matrix {
@@ -297,5 +306,18 @@ mod tests {
         let s = m.submatrix(1, 0);
         assert_eq!(s.determinant(), 25.0);
         assert_eq!(m.minor(1, 0), 25.0);
+    }
+
+    #[test]
+    fn test_cofactor_of_a_3x3_matrix() {
+        let m = Matrix::from_vec(vec![
+            vec![3.0, 5.0, 0.0],
+            vec![2.0, -1.0, -7.0],
+            vec![6.0, -1.0, 5.0],
+        ]);
+        assert_eq!(m.minor(0, 0), -12.0);
+        assert_eq!(m.cofactor(0, 0), -12.0);
+        assert_eq!(m.minor(1, 0), 25.0);
+        assert_eq!(m.cofactor(1, 0), -25.0);
     }
 }
