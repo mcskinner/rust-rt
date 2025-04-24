@@ -164,10 +164,10 @@ impl Matrix {
     }
 }
 
-impl Mul for Matrix {
+impl Mul for &Matrix {
     type Output = Matrix;
 
-    fn mul(self, other: Matrix) -> Matrix {
+    fn mul(self, other: &Matrix) -> Matrix {
         let l = self.data.len();
         let m = self.data[0].len();
         let n = other.data[0].len();
@@ -184,6 +184,14 @@ impl Mul for Matrix {
         }
 
         Matrix::from_vec(result)
+    }
+}
+
+impl Mul for Matrix {
+    type Output = Matrix;
+
+    fn mul(self, other: Matrix) -> Matrix {
+        &self * &other
     }
 }
 

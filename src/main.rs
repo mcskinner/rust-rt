@@ -77,7 +77,7 @@ fn draw_clock() {
 
     for i in 0..12 {
         let angle = (i as f64) * std::f64::consts::PI / 6.0;
-        let t = position_on_canvas.clone() * Matrix::rotation_z(-angle);
+        let t = &position_on_canvas * &Matrix::rotation_z(-angle);
         let p = t * noon;
         draw_box(&mut c, p.x.round() as usize, p.y.round() as usize);
     }
