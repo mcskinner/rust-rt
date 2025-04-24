@@ -551,4 +551,11 @@ mod tests {
         let p = vector(-4.0, 6.0, 8.0);
         assert_eq!(inv * p, vector(-2.0, 2.0, 2.0));
     }
+
+    #[test]
+    fn test_reflection_is_scaling_by_a_negative_value() {
+        let transform = Matrix::scaling(-1.0, 1.0, 1.0);
+        let p = point(2.0, 3.0, 4.0);
+        assert_eq!(transform * p, point(-2.0, 3.0, 4.0));
+    }
 }
