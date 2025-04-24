@@ -2,9 +2,10 @@ mod canvas;
 mod color;
 mod matrix;
 mod tuple;
-use canvas::canvas;
-use color::color;
-use tuple::{point, vector, Tuple};
+use crate::canvas::canvas;
+use crate::color::color;
+use crate::matrix::Matrix;
+use crate::tuple::{point, vector, Tuple};
 
 #[derive(Debug, Clone, Copy)]
 struct Env {
@@ -66,6 +67,26 @@ fn simulate_projectile() {
     std::io::Write::write_all(&mut file, ppm.as_bytes()).unwrap();
 }
 
+fn draw_clock() {
+    let size = 400;
+    let radius = 0.4 * size as f64;
+    let noon = point(0.0, radius, 0.0);
+    let mut c = canvas(size, size);
+
+    let position_on_canvas = Matrix::translation(size as f64 / 2.0, size as f64 / 2.0, 0.0);
+
+    for i in 0..12 {
+        let angle = (i as f64) * std::f64::consts::PI / 6.0;
+        let t = position_on_canvas.clone() * Matrix::rotation_z(-angle);
+        let p = t * noon;
+        draw_box(&mut c, p.x.round() as usize, p.y.round() as usize);
+    }
+
+    let ppm = c.to_ppm();
+    let mut file = std::fs::File::create("clock.ppm").unwrap();
+    std::io::Write::write_all(&mut file, ppm.as_bytes()).unwrap();
+}
+
 fn main() {
-    simulate_projectile();
+    draw_clock();
 }

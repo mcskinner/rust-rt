@@ -3,16 +3,16 @@ use crate::tuple::{point, tuple, vector, Tuple};
 use std::ops::Mul;
 
 #[derive(Debug, Clone, PartialEq)]
-struct Matrix {
+pub struct Matrix {
     data: Vec<Vec<f64>>,
 }
 
 impl Matrix {
-    fn from_vec(data: Vec<Vec<f64>>) -> Matrix {
+    pub fn from_vec(data: Vec<Vec<f64>>) -> Matrix {
         Matrix { data }
     }
 
-    fn identity(size: usize) -> Matrix {
+    pub fn identity(size: usize) -> Matrix {
         let mut data = vec![vec![0.0; size]; size];
         for i in 0..size {
             data[i][i] = 1.0;
@@ -20,7 +20,7 @@ impl Matrix {
         Matrix::from_vec(data)
     }
 
-    fn from_tuple(t: &Tuple) -> Matrix {
+    pub fn from_tuple(t: &Tuple) -> Matrix {
         Matrix::from_vec(vec![
             vec![t.x],
             vec![t.y],
@@ -29,7 +29,7 @@ impl Matrix {
         ])
     }
 
-    fn translation(x: f64, y: f64, z: f64) -> Matrix {
+    pub fn translation(x: f64, y: f64, z: f64) -> Matrix {
         let mut m = Matrix::identity(4);
         m.data[0][3] = x;
         m.data[1][3] = y;
@@ -37,7 +37,7 @@ impl Matrix {
         m
     }
 
-    fn scaling(x: f64, y: f64, z: f64) -> Matrix {
+    pub fn scaling(x: f64, y: f64, z: f64) -> Matrix {
         let mut m = Matrix::identity(4);
         m.data[0][0] = x;
         m.data[1][1] = y;
@@ -45,7 +45,7 @@ impl Matrix {
         m
     }
 
-    fn rotation_x(r: f64) -> Matrix {
+    pub fn rotation_x(r: f64) -> Matrix {
         let mut m = Matrix::identity(4);
         m.data[1][1] = r.cos();
         m.data[1][2] = -r.sin();
@@ -54,7 +54,7 @@ impl Matrix {
         m
     }
 
-    fn rotation_y(r: f64) -> Matrix {
+    pub fn rotation_y(r: f64) -> Matrix {
         let mut m = Matrix::identity(4);
         m.data[0][0] = r.cos();
         m.data[0][2] = r.sin();
@@ -63,7 +63,7 @@ impl Matrix {
         m
     }
 
-    fn rotation_z(r: f64) -> Matrix {
+    pub fn rotation_z(r: f64) -> Matrix {
         let mut m = Matrix::identity(4);
         m.data[0][0] = r.cos();
         m.data[0][1] = -r.sin();
@@ -72,7 +72,7 @@ impl Matrix {
         m
     }
 
-    fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix {
+    pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix {
         let mut m = Matrix::identity(4);
         m.data[0][1] = xy;
         m.data[0][2] = xz;
