@@ -72,6 +72,17 @@ impl Matrix {
         m
     }
 
+    fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix {
+        let mut m = Matrix::identity(4);
+        m.data[0][1] = xy;
+        m.data[0][2] = xz;
+        m.data[1][0] = yx;
+        m.data[1][2] = yz;
+        m.data[2][0] = zx;
+        m.data[2][1] = zy;
+        m
+    }
+
     fn to_tuple(&self) -> Tuple {
         assert_eq!(self.data.len(), 4, "Matrix must have exactly four rows to convert to Tuple");
         assert_eq!(self.data[0].len(), 1, "Matrix must have exactly one column to convert to Tuple");
@@ -619,5 +630,12 @@ mod tests {
         let full_quarter = Matrix::rotation_z(std::f64::consts::FRAC_PI_2);
         assert_abs_diff_eq!(half_quarter * p, point(-std::f64::consts::FRAC_1_SQRT_2, std::f64::consts::FRAC_1_SQRT_2, 0.0));
         assert_abs_diff_eq!(full_quarter * p, point(-1.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn test_a_shearing_moves_x_in_proportion_to_y() {
+        let transform = Matrix::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        let p = point(2.0, 3.0, 4.0);
+        assert_eq!(transform * p, point(5.0, 3.0, 4.0));
     }
 }
