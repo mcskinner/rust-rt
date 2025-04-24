@@ -638,4 +638,39 @@ mod tests {
         let p = point(2.0, 3.0, 4.0);
         assert_eq!(transform * p, point(5.0, 3.0, 4.0));
     }
+
+    #[test]
+    fn test_a_shearing_moves_x_in_proportion_to_z() {
+        let transform = Matrix::shearing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
+        let p = point(2.0, 3.0, 4.0);
+        assert_eq!(transform * p, point(6.0, 3.0, 4.0));
+    }
+
+    #[test]
+    fn test_a_shearing_moves_y_in_proportion_to_x() {
+        let transform = Matrix::shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+        let p = point(2.0, 3.0, 4.0);
+        assert_eq!(transform * p, point(2.0, 5.0, 4.0));
+    }
+
+    #[test]
+    fn test_a_shearing_moves_y_in_proportion_to_z() {
+        let transform = Matrix::shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+        let p = point(2.0, 3.0, 4.0);
+        assert_eq!(transform * p, point(2.0, 7.0, 4.0));
+    }
+
+    #[test]
+    fn test_a_shearing_moves_z_in_proportion_to_x() {
+        let transform = Matrix::shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+        let p = point(2.0, 3.0, 4.0);
+        assert_eq!(transform * p, point(2.0, 3.0, 6.0));
+    }
+
+    #[test]
+    fn test_a_shearing_moves_z_in_proportion_to_y() {
+        let transform = Matrix::shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+        let p = point(2.0, 3.0, 4.0);
+        assert_eq!(transform * p, point(2.0, 3.0, 7.0));
+    }
 }
