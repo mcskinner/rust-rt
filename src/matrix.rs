@@ -1,5 +1,5 @@
 use approx::{assert_abs_diff_eq, AbsDiffEq};
-use crate::tuple::{tuple, Tuple};
+use crate::tuple::{point, tuple, Tuple};
 use std::ops::Mul;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -27,6 +27,14 @@ impl Matrix {
             vec![t.z],
             vec![t.w],
         ])
+    }
+
+    fn translation(x: f64, y: f64, z: f64) -> Matrix {
+        let mut m = Matrix::identity(4);
+        m.data[0][3] = x;
+        m.data[1][3] = y;
+        m.data[2][3] = z;
+        m
     }
 
     fn to_tuple(&self) -> Tuple {
@@ -490,5 +498,12 @@ mod tests {
         ]);
         let i = m.inverse();
         assert_abs_diff_eq!(m * i, Matrix::identity(4));
+    }
+
+    #[test]
+    fn test_multiplying_by_a_translation_matrix() {
+        let transform = Matrix::translation(5.0, -3.0, 2.0);
+        let p = point(-3.0, 4.0, 5.0);
+        assert_eq!(transform * p, point(2.0, 1.0, 7.0));
     }
 }

@@ -61,3 +61,13 @@ In this case I had to go with `Vec<Vec<f64>>`, since arrays are fixed size and N
 I didn't realize there was an `ndarray::arr2` I could have used until I was halfway through. There's even a [cookbook for linear algebra](https://rust-lang-nursery.github.io/rust-cookbook/science/mathematics/linear_algebra.html) that uses it to cover what I've been doing the harder way.
 
 I'll continue with my by-hand implementation, but will consider refactoring later.
+
+# Chapter 4
+
+### Where to put the transformations feature
+
+I think it makes the most sense to put these on the Matrix object itself.
+
+The case for a new file is that these aren't things a matrix does, but rather a use of a matrix to do something.
+
+But in practice it'll be nice to have everything in one place.
