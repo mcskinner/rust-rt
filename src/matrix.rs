@@ -54,6 +54,15 @@ impl Matrix {
         m
     }
 
+    fn rotation_y(r: f64) -> Matrix {
+        let mut m = Matrix::identity(4);
+        m.data[0][0] = r.cos();
+        m.data[0][2] = r.sin();
+        m.data[2][0] = -r.sin();
+        m.data[2][2] = r.cos();
+        m
+    }
+
     fn to_tuple(&self) -> Tuple {
         assert_eq!(self.data.len(), 4, "Matrix must have exactly four rows to convert to Tuple");
         assert_eq!(self.data[0].len(), 1, "Matrix must have exactly one column to convert to Tuple");
@@ -583,5 +592,14 @@ mod tests {
         let half_quarter = Matrix::rotation_x(std::f64::consts::FRAC_PI_4);
         let inv = half_quarter.inverse();
         assert_abs_diff_eq!(inv * p, point(0.0, std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2));
+    }
+
+    #[test]
+    fn test_rotating_a_point_around_the_y_axis() {
+        let p = point(0.0, 0.0, 1.0);
+        let half_quarter = Matrix::rotation_y(std::f64::consts::FRAC_PI_4);
+        let full_quarter = Matrix::rotation_y(std::f64::consts::FRAC_PI_2);
+        assert_abs_diff_eq!(half_quarter * p, point(std::f64::consts::FRAC_1_SQRT_2, 0.0, std::f64::consts::FRAC_1_SQRT_2));
+        assert_abs_diff_eq!(full_quarter * p, point(1.0, 0.0, 0.0));
     }
 }
