@@ -37,6 +37,14 @@ impl Matrix {
         m
     }
 
+    fn scaling(x: f64, y: f64, z: f64) -> Matrix {
+        let mut m = Matrix::identity(4);
+        m.data[0][0] = x;
+        m.data[1][1] = y;
+        m.data[2][2] = z;
+        m
+    }
+
     fn to_tuple(&self) -> Tuple {
         assert_eq!(self.data.len(), 4, "Matrix must have exactly four rows to convert to Tuple");
         assert_eq!(self.data[0].len(), 1, "Matrix must have exactly one column to convert to Tuple");
@@ -520,5 +528,27 @@ mod tests {
         let transform = Matrix::translation(5.0, -3.0, 2.0);
         let v = vector(-3.0, 4.0, 5.0);
         assert_eq!(transform * v, v);
+    }
+
+    #[test]
+    fn test_scaling_a_point() {
+        let transform = Matrix::scaling(2.0, 3.0, 4.0);
+        let p = point(-4.0, 6.0, 8.0);
+        assert_eq!(transform * p, point(-8.0, 18.0, 32.0));
+    }
+
+    #[test]
+    fn test_scaling_a_vector() {
+        let transform = Matrix::scaling(2.0, 3.0, 4.0);
+        let v = vector(-4.0, 6.0, 8.0);
+        assert_eq!(transform * v, vector(-8.0, 18.0, 32.0));
+    }
+
+    #[test]
+    fn test_scaling_a_vector_with_a_inverse_scaling_matrix() {
+        let transform = Matrix::scaling(2.0, 3.0, 4.0);
+        let inv = transform.inverse();
+        let p = vector(-4.0, 6.0, 8.0);
+        assert_eq!(inv * p, vector(-2.0, 2.0, 2.0));
     }
 }
