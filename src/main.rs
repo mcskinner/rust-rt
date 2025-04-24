@@ -43,7 +43,7 @@ fn draw_box(c: &mut canvas::Canvas, x: usize, y: usize) {
     }
 }
 
-fn main() {
+fn simulate_projectile() {
     let start = point(0.0, 1.0, 0.0);
     let velocity = vector(1.0, 1.8, 0.0).normalize() * 11.25;
     let mut p = Projectile::new(start, velocity);
@@ -64,4 +64,8 @@ fn main() {
     let ppm = c.to_ppm();
     let mut file = std::fs::File::create("projectile.ppm").unwrap();
     std::io::Write::write_all(&mut file, ppm.as_bytes()).unwrap();
+}
+
+fn main() {
+    simulate_projectile();
 }
