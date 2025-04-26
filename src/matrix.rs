@@ -195,12 +195,20 @@ impl Mul for Matrix {
     }
 }
 
+impl Mul<Tuple> for &Matrix {
+    type Output = Tuple;
+
+    fn mul(self, other: Tuple) -> Tuple {
+        let result = self * &Matrix::from_tuple(&other);
+        result.to_tuple()
+    }
+}
+
 impl Mul<Tuple> for Matrix {
     type Output = Tuple;
 
     fn mul(self, other: Tuple) -> Tuple {
-        let result = self * Matrix::from_tuple(&other);
-        result.to_tuple()
+        &self * other
     }
 }
 
