@@ -1,6 +1,7 @@
 mod canvas;
 mod color;
 mod matrix;
+mod ray;
 mod tuple;
 use crate::canvas::canvas;
 use crate::color::color;
