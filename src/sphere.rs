@@ -1,14 +1,22 @@
 use crate::intersection::Intersection;
+use crate::matrix::Matrix;
 use crate::tuple::{point, vector};
 use crate::ray::Ray;
 
 #[derive(Debug)]
 pub struct Sphere {
+    transform: Matrix
 }
 
 impl Sphere {
     pub fn new() -> Sphere {
-        Sphere {}
+        Sphere {
+            transform: Matrix::identity(4),
+        }
+    }
+
+    pub fn set_transform(&mut self, m: &Matrix) {
+        self.transform = m.clone();
     }
 
     fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
@@ -98,5 +106,19 @@ mod tests {
         assert_eq!(xs.len(), 2);
         assert_eq!(xs[0].object, &s);
         assert_eq!(xs[1].object, &s);
+    }
+
+    #[test]
+    fn test_a_spheres_default_transformation() {
+        let s = Sphere::new();
+        assert_eq!(s.transform, Matrix::identity(4));
+    }
+
+    #[test]
+    fn test_changing_a_spheres_transformation() {
+        let mut s = Sphere::new();
+        let m = Matrix::translation(2.0, 3.0, 4.0);
+        s.set_transform(&m);
+        assert_eq!(s.transform, m);
     }
 }
