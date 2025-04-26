@@ -71,3 +71,23 @@ I think it makes the most sense to put these on the Matrix object itself.
 The case for a new file is that these aren't things a matrix does, but rather a use of a matrix to do something.
 
 But in practice it'll be nice to have everything in one place.
+
+# Chapter 5
+
+### How to track intersection objects
+
+The way the compiler recommended was to implement and use clone. And that's fine, I guess.
+
+But I think intersections are going to be common and I don't want them to be too heavyweight.
+
+So I decided to go with borrowing, and had to use some only-partially-understood lifetime annotation syntax with <'a> and all that to make it work.
+
+### Sphere equality
+
+I went with a pointer equality check I found on S/O.
+
+### Intersection list
+
+Going with a plain `Vec<Intersection>` and will make `hit` a plain function.
+
+I've done everything object oriented so far, but maybe that's not the best fit for the language.
