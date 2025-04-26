@@ -20,10 +20,11 @@ impl Sphere {
     }
 
     fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
-        let sphere_to_ray = ray.origin - point(0.0, 0.0, 0.0);
+        let ray_t = ray.transform(&self.transform.inverse());
+        let sphere_to_ray = ray_t.origin - point(0.0, 0.0, 0.0);
 
-        let a = ray.direction.dot(&ray.direction);
-        let b = 2.0 * ray.direction.dot(&sphere_to_ray);
+        let a = ray_t.direction.dot(&ray_t.direction);
+        let b = 2.0 * ray_t.direction.dot(&sphere_to_ray);
         let c = sphere_to_ray.dot(&sphere_to_ray) - 1.0;
 
         let discriminant = b * b - 4.0 * a * c;
@@ -120,5 +121,25 @@ mod tests {
         let m = Matrix::translation(2.0, 3.0, 4.0);
         s.set_transform(&m);
         assert_eq!(s.transform, m);
+    }
+
+    #[test]
+    fn test_intersecting_a_scaled_sphere_with_a_ray() {
+        let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+        let mut s = Sphere::new();
+        s.set_transform(&Matrix::scaling(2.0, 2.0, 2.0));
+        let xs = s.intersect(&r);
+        assert_eq!(xs.len(), 2);
+        assert_eq!(xs[0].t, 3.0);
+        assert_eq!(xs[1].t, 7.0);
+    }
+
+    #[test]
+    fn test_intersecting_a_translated_sphere_with_a_ray() {
+        let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+        let mut s = Sphere::new();
+        s.set_transform(&Matrix::translation(5.0, 0.0, 0.0));
+        let xs = s.intersect(&r);
+        assert_eq!(xs.len(), 0);
     }
 }

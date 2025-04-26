@@ -150,7 +150,7 @@ impl Matrix {
         self.determinant() != 0.0
     }
 
-    fn inverse(&self) -> Matrix {
+    pub fn inverse(&self) -> Matrix {
         assert!(self.is_invertible(), "Matrix is not invertible");
         let det = self.determinant();
         let mut result = vec![vec![0.0; self.data.len()]; self.data.len()];
