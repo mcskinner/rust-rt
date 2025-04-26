@@ -1,16 +1,16 @@
 use crate::tuple::{point, vector, Tuple};
 
-struct Ray {
-    origin: Tuple,
-    direction: Tuple,
+pub struct Ray {
+    pub origin: Tuple,
+    pub direction: Tuple,
 }
 
 impl Ray {
-    fn new(origin: Tuple, direction: Tuple) -> Ray {
+    pub fn new(origin: Tuple, direction: Tuple) -> Ray {
         Ray { origin, direction }
     }
 
-    fn position(&self, t: f64) -> Tuple {
+    pub fn position(&self, t: f64) -> Tuple {
         self.origin + self.direction * t
     }
 }
