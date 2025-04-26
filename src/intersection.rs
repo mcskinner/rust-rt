@@ -1,6 +1,6 @@
 use crate::sphere::Sphere;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Intersection<'a> {
     pub t: f64,
     pub object: &'a Sphere,
@@ -12,18 +12,29 @@ impl Intersection<'_> {
     }
 }
 
-pub fn hit<'a>(xs: &'a [Intersection<'a>]) -> Option<&'a Intersection<'a>> {
-    let mut hit: Option<&Intersection> = None;
+pub struct Intersections<'a> {
+    pub xs: Vec<Intersection<'a>>,
+}
 
-    for i in xs {
-        if i.t > 0.0 {
-            if hit.is_none() || i.t < hit.unwrap().t {
-                hit = Some(i);
-            }
-        }
+impl<'a> Intersections<'a> {
+    pub fn new(xs: Vec<Intersection<'a>>) -> Intersections<'a> {
+        Intersections { xs }
     }
 
-    hit
+    pub fn hit(&self) -> Option<&Intersection> {
+        let mut hit: Option<&Intersection> = None;
+
+        for i in &self.xs {
+            if i.t > 0.0 {
+                if hit.is_none() || i.t < hit.unwrap().t {
+                    hit = Some(i);
+                }
+            }
+        }
+
+        hit
+    }
+    
 }
 
 #[cfg(test)]
@@ -45,10 +56,10 @@ mod tests {
         let s = Sphere::new();
         let i1 = Intersection::new(1.0, &s);
         let i2 = Intersection::new(2.0, &s);
-        let xs = vec![i1, i2];
-        assert_eq!(xs.len(), 2);
-        assert_eq!(xs[0].t, 1.0);
-        assert_eq!(xs[1].t, 2.0);
+        let xs = Intersections::new(vec![i1, i2]);
+        assert_eq!(xs.xs.len(), 2);
+        assert_eq!(xs.xs[0].t, 1.0);
+        assert_eq!(xs.xs[1].t, 2.0);
     }
 
     #[test]
@@ -56,8 +67,8 @@ mod tests {
         let s = Sphere::new();
         let i1 = Intersection::new(1.0, &s);
         let i2 = Intersection::new(-1.0, &s);
-        let xs = vec![i2, i1];
-        assert_eq!(hit(&xs).unwrap().t, 1.0);
+        let xs = Intersections::new(vec![i2, i1]);
+        assert_eq!(xs.hit().unwrap().t, 1.0);
     }
 
     #[test]
@@ -65,8 +76,8 @@ mod tests {
         let s = Sphere::new();
         let i1 = Intersection::new(-1.0, &s);
         let i2 = Intersection::new(1.0, &s);
-        let xs = vec![i1, i2];
-        assert_eq!(hit(&xs).unwrap().t, 1.0);
+        let xs = Intersections::new(vec![i1, i2]);
+        assert_eq!(xs.hit().unwrap().t, 1.0);
     }
 
     #[test]
@@ -74,8 +85,8 @@ mod tests {
         let s = Sphere::new();
         let i1 = Intersection::new(-2.0, &s);
         let i2 = Intersection::new(-1.0, &s);
-        let xs = vec![i2, i1];
-        assert_eq!(hit(&xs), None);
+        let xs = Intersections::new(vec![i2, i1]);
+        assert_eq!(xs.hit().is_none(), true);
     }
 
     #[test]
@@ -85,7 +96,8 @@ mod tests {
         let i2 = Intersection::new(7.0, &s);
         let i3 = Intersection::new(-3.0, &s);
         let i4 = Intersection::new(2.0, &s);
-        let xs = vec![i1, i2, i3, i4];
-        assert_eq!(hit(&xs).unwrap(), &xs[3]);
+        let expected = i4.clone();
+        let xs = Intersections::new(vec![i1, i2, i3, i4]);
+        assert_eq!(xs.hit().unwrap(), &expected);
     }
 }
