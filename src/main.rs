@@ -102,8 +102,8 @@ fn render_sphere() {
     for y in 0..size {
         for x in 0..size {
             let p = point(
-                (x as f64 - size as f64 / 2.0) / (size as f64 / 2.0),
-                (y as f64 - size as f64 / 2.0) / (size as f64 / 2.0),
+                2.0 * (x as f64) / (size as f64) - 1.0,
+                2.0 * (y as f64) / (size as f64) - 1.0,
                 0.0,
             );
 

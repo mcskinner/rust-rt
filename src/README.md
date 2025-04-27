@@ -91,3 +91,11 @@ I went with a pointer equality check I found on S/O.
 Going with a plain `Vec<Intersection>` and will make `hit` a plain function.
 
 I've done everything object oriented so far, but maybe that's not the best fit for the language.
+
+### Moving toward borrowing
+
+I keep getting warnings about cloning. I'd probably have formed a habit of slapping Clone and Copy derives on everything if Vec had allowed the implicit.
+
+But it doesn't, which I took as a nudge to do more borrowing.
+
+As it has increasingly become the standard for me, I'm going to make it my default going forward. It'd probably be worthwhile to go back and refactor earlier code, but not sure when I'll take that on. The initial 400x400 renders have been fairly slow though (many seconds) which suggests to me some meaningful room for improvement. Maybe worth looking into a profiler.
