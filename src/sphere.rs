@@ -5,22 +5,25 @@ use crate::ray::Ray;
 
 #[derive(Debug)]
 pub struct Sphere {
-    transform: Matrix
+    transform: Matrix,
+    inverse_transform: Matrix,
 }
 
 impl Sphere {
     pub fn new() -> Sphere {
         Sphere {
             transform: Matrix::identity(4),
+            inverse_transform: Matrix::identity(4),
         }
     }
 
     pub fn set_transform(&mut self, m: &Matrix) {
         self.transform = m.clone();
+        self.inverse_transform = m.inverse();
     }
 
     pub fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
-        let ray_t = ray.transform(&self.transform.inverse());
+        let ray_t = ray.transform(&self.inverse_transform);
         let sphere_to_ray = ray_t.origin - point(0.0, 0.0, 0.0);
 
         let a = ray_t.direction.dot(&ray_t.direction);
