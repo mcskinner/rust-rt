@@ -8,6 +8,7 @@ mod tuple;
 use crate::canvas::canvas;
 use crate::color::color;
 use crate::matrix::Matrix;
+use crate::sphere::Sphere;
 use crate::tuple::{point, vector, Tuple};
 
 #[derive(Debug, Clone, Copy)]
@@ -90,6 +91,36 @@ fn draw_clock() {
     std::io::Write::write_all(&mut file, ppm.as_bytes()).unwrap();
 }
 
+fn render_sphere() {
+    let size = 400;
+    let mut c = canvas(size, size);
+    let mut s = Sphere::new();
+    s.set_transform(&Matrix::translation(0.0, 0.0, 2.0));
+
+    let camera = point(0.0, 0.0, -5.0);
+
+    for y in 0..size {
+        for x in 0..size {
+            let p = point(
+                (x as f64 - size as f64 / 2.0) / (size as f64 / 2.0),
+                (y as f64 - size as f64 / 2.0) / (size as f64 / 2.0),
+                0.0,
+            );
+
+            let direction = (p - camera).normalize();
+            let ray = ray::Ray::new(camera, direction);
+            
+            if s.intersect(&ray).len() > 0 {
+                c.write_pixel(x, y, color(1.0, 0.0, 0.0));
+            }
+        }
+    }
+
+    let ppm = c.to_ppm();
+    let mut file = std::fs::File::create("sphere.ppm").unwrap();
+    std::io::Write::write_all(&mut file, ppm.as_bytes()).unwrap();
+}
+
 fn main() {
-    draw_clock();
+    render_sphere();
 }

@@ -19,7 +19,7 @@ impl Sphere {
         self.transform = m.clone();
     }
 
-    fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
+    pub fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
         let ray_t = ray.transform(&self.transform.inverse());
         let sphere_to_ray = ray_t.origin - point(0.0, 0.0, 0.0);
 
