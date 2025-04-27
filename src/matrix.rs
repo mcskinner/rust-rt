@@ -1,5 +1,5 @@
 use approx::{assert_abs_diff_eq, AbsDiffEq};
-use crate::tuple::{point, tuple, vector, Tuple};
+use crate::tuple::{point, vector, Tuple};
 use std::ops::Mul;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -86,7 +86,7 @@ impl Matrix {
     fn to_tuple(&self) -> Tuple {
         assert_eq!(self.data.len(), 4, "Matrix must have exactly four rows to convert to Tuple");
         assert_eq!(self.data[0].len(), 1, "Matrix must have exactly one column to convert to Tuple");
-        tuple(self.data[0][0], self.data[1][0], self.data[2][0], self.data[3][0])
+        Tuple::new(self.data[0][0], self.data[1][0], self.data[2][0], self.data[3][0])
     }
 
     fn transpose(&self) -> Matrix {
@@ -341,8 +341,8 @@ mod tests {
             vec![8.0, 6.0, 4.0, 1.0],
             vec![0.0, 0.0, 0.0, 1.0],
         ]);
-        let t = tuple(1.0, 2.0, 3.0, 1.0);
-        assert_eq!(m * t, tuple(18.0, 24.0, 33.0, 1.0));
+        let t = Tuple::new(1.0, 2.0, 3.0, 1.0);
+        assert_eq!(m * t, Tuple::new(18.0, 24.0, 33.0, 1.0));
     }
 
     #[test]
