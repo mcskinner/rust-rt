@@ -92,6 +92,8 @@ Going with a plain `Vec<Intersection>` and will make `hit` a plain function.
 
 I've done everything object oriented so far, but maybe that's not the best fit for the language.
 
+I actually had to refactor this later to an `Intersections` object of its own. The type management got out of hand with the plain `Vec`.
+
 ### Moving toward borrowing
 
 I keep getting warnings about cloning. I'd probably have formed a habit of slapping Clone and Copy derives on everything if Vec had allowed the implicit.
