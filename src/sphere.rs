@@ -1,5 +1,5 @@
 use approx::assert_abs_diff_eq;
-use crate::intersection::Intersection;
+use crate::intersection::{Intersection, Intersections};
 use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::tuple::{point, vector, Tuple};
@@ -30,7 +30,7 @@ impl Sphere {
         self.material = m.clone();
     }
 
-    pub fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
+    pub fn intersect(&self, ray: &Ray) -> Intersections {
         let ray_t = ray.transform(&self.inverse_transform);
         let sphere_to_ray = ray_t.origin - point(0.0, 0.0, 0.0);
 
@@ -41,14 +41,14 @@ impl Sphere {
         let discriminant = b * b - 4.0 * a * c;
 
         if discriminant < 0.0 {
-            return vec![];
+            return Intersections::new(vec![]);
         } else if discriminant == 0.0 {
             let t = -b / (2.0 * a);
-            return vec![Intersection::new(t, self)];
+            return Intersections::new(vec![Intersection::new(t, self)]);
         } else {
             let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
-            return vec![Intersection::new(t1, self), Intersection::new(t2, self)];
+            return Intersections::new(vec![Intersection::new(t1, self), Intersection::new(t2, self)]);
         }
     }
 
@@ -76,9 +76,9 @@ mod tests {
         let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
         let xs = s.intersect(&r);
-        assert_eq!(xs.len(), 2);
-        assert_eq!(xs[0].t, 4.0);
-        assert_eq!(xs[1].t, 6.0);
+        assert_eq!(xs.xs.len(), 2);
+        assert_eq!(xs.xs[0].t, 4.0);
+        assert_eq!(xs.xs[1].t, 6.0);
     }
 
     #[test]
@@ -86,8 +86,8 @@ mod tests {
         let r = Ray::new(point(0.0, 1.0, -5.0), vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
         let xs = s.intersect(&r);
-        assert_eq!(xs.len(), 1);
-        assert_eq!(xs[0].t, 5.0);
+        assert_eq!(xs.xs.len(), 1);
+        assert_eq!(xs.xs[0].t, 5.0);
     }
 
     #[test]
@@ -95,7 +95,7 @@ mod tests {
         let r = Ray::new(point(0.0, 2.0, -5.0), vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
         let xs = s.intersect(&r);
-        assert_eq!(xs.len(), 0);
+        assert_eq!(xs.xs.len(), 0);
     }
 
     #[test]
@@ -103,9 +103,9 @@ mod tests {
         let r = Ray::new(point(0.0, 0.0, 0.0), vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
         let xs = s.intersect(&r);
-        assert_eq!(xs.len(), 2);
-        assert_eq!(xs[0].t, -1.0);
-        assert_eq!(xs[1].t, 1.0);
+        assert_eq!(xs.xs.len(), 2);
+        assert_eq!(xs.xs[0].t, -1.0);
+        assert_eq!(xs.xs[1].t, 1.0);
     }
 
     #[test]
@@ -113,9 +113,9 @@ mod tests {
         let r = Ray::new(point(0.0, 0.0, 5.0), vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
         let xs = s.intersect(&r);
-        assert_eq!(xs.len(), 2);
-        assert_eq!(xs[0].t, -6.0);
-        assert_eq!(xs[1].t, -4.0);
+        assert_eq!(xs.xs.len(), 2);
+        assert_eq!(xs.xs[0].t, -6.0);
+        assert_eq!(xs.xs[1].t, -4.0);
     }
 
     #[test]
@@ -123,9 +123,9 @@ mod tests {
         let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
         let xs = s.intersect(&r);
-        assert_eq!(xs.len(), 2);
-        assert_eq!(xs[0].object, &s);
-        assert_eq!(xs[1].object, &s);
+        assert_eq!(xs.xs.len(), 2);
+        assert_eq!(xs.xs[0].object, &s);
+        assert_eq!(xs.xs[1].object, &s);
     }
 
     #[test]
@@ -148,9 +148,9 @@ mod tests {
         let mut s = Sphere::new();
         s.set_transform(&Matrix::scaling(2.0, 2.0, 2.0));
         let xs = s.intersect(&r);
-        assert_eq!(xs.len(), 2);
-        assert_eq!(xs[0].t, 3.0);
-        assert_eq!(xs[1].t, 7.0);
+        assert_eq!(xs.xs.len(), 2);
+        assert_eq!(xs.xs[0].t, 3.0);
+        assert_eq!(xs.xs[1].t, 7.0);
     }
 
     #[test]
@@ -159,7 +159,7 @@ mod tests {
         let mut s = Sphere::new();
         s.set_transform(&Matrix::translation(5.0, 0.0, 0.0));
         let xs = s.intersect(&r);
-        assert_eq!(xs.len(), 0);
+        assert_eq!(xs.xs.len(), 0);
     }
 
     #[test]
