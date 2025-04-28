@@ -115,3 +115,5 @@ This chapter was straightforward, but I'm noticing more and more patterns I used
 - Constructor functions outside of the impl. First up is to move `color` to `Color::new`.
 - How to wrap types / use the newtype pattern. I think newtype is probably what I wanted, but didn't grok the `.0` syntax for accessing the wrapped variable.
 - Importing functions inside the test submodule, which Copilot just did. This makes a lot of sense, probably a bunch I can port there.
+- Some handy constants, like `Color::WHITE` or `Tuple::ORIGIN`
+- Organize within-crate imports to make `use crate::` style the path of least resistance
