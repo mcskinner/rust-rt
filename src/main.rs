@@ -9,6 +9,7 @@ mod sphere;
 mod tuple;
 use crate::canvas::canvas;
 use crate::color::color;
+use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::sphere::Sphere;
 use crate::tuple::{point, vector, Tuple};
@@ -97,23 +98,30 @@ fn render_sphere() {
     let size = 400;
     let mut c = canvas(size, size);
     let mut s = Sphere::new();
+    let mut m = Material::new();
+    m.color = color(1.0, 0.2, 1.0);
+    s.set_material(&m);
     s.set_transform(&Matrix::translation(0.0, 0.0, 2.0));
 
     let camera = point(0.0, 0.0, -5.0);
+    let light = light::Light::new(point(-10.0, 10.0, -10.0), color(1.0, 1.0, 1.0));
 
     for y in 0..size {
         for x in 0..size {
             let p = point(
                 2.0 * (x as f64) / (size as f64) - 1.0,
-                2.0 * (y as f64) / (size as f64) - 1.0,
+                1.0 - 2.0 * (y as f64) / (size as f64),
                 0.0,
             );
 
             let direction = (p - camera).normalize();
             let ray = ray::Ray::new(camera, direction);
-            
-            if s.intersect(&ray).len() > 0 {
-                c.write_pixel(x, y, color(1.0, 0.0, 0.0));
+            if let Some(hit) = s.intersect(&ray).hit() {
+                let point = ray.position(hit.t);
+                let normal = s.normal_at(point);
+                let eyev = (camera - point).normalize();
+                let color = m.lighting(&light, &point, &eyev, &normal);
+                c.write_pixel(x, y, color);
             }
         }
     }

@@ -23,7 +23,7 @@ impl Material {
         }
     }
 
-    fn lighting(
+    pub fn lighting(
         &self,
         light: &Light,
         position: &Tuple,
