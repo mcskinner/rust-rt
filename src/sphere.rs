@@ -1,6 +1,6 @@
 use crate::intersection::Intersection;
 use crate::matrix::Matrix;
-use crate::tuple::{point, vector};
+use crate::tuple::{point, vector, Tuple};
 use crate::ray::Ray;
 
 #[derive(Debug)]
@@ -42,6 +42,10 @@ impl Sphere {
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
             return vec![Intersection::new(t1, self), Intersection::new(t2, self)];
         }
+    }
+
+    pub fn normal_at(&self, world_point: Tuple) -> Tuple {
+        world_point - point(0.0, 0.0, 0.0)
     }
 }
 
@@ -144,5 +148,42 @@ mod tests {
         s.set_transform(&Matrix::translation(5.0, 0.0, 0.0));
         let xs = s.intersect(&r);
         assert_eq!(xs.len(), 0);
+    }
+
+    #[test]
+    fn test_normal_at_a_point_on_the_x_axis() {
+        let s = Sphere::new();
+        let n = s.normal_at(point(1.0, 0.0, 0.0));
+        assert_eq!(n, vector(1.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn test_normal_at_a_point_on_the_y_axis() {
+        let s = Sphere::new();
+        let n = s.normal_at(point(0.0, 1.0, 0.0));
+        assert_eq!(n, vector(0.0, 1.0, 0.0));
+    }
+
+    #[test]
+    fn test_normal_at_a_point_on_the_z_axis() {
+        let s = Sphere::new();
+        let n = s.normal_at(point(0.0, 0.0, 1.0));
+        assert_eq!(n, vector(0.0, 0.0, 1.0));
+    }
+
+    #[test]
+    fn test_normal_at_a_nonaxial_point() {
+        let s = Sphere::new();
+        let sqrt_3_over_3 = (3.0_f64).sqrt() / 3.0;
+        let n = s.normal_at(point(sqrt_3_over_3, sqrt_3_over_3, sqrt_3_over_3));
+        assert_eq!(n, vector(sqrt_3_over_3, sqrt_3_over_3, sqrt_3_over_3));
+    }
+
+    #[test]
+    fn test_normal_is_normalized() {
+        let s = Sphere::new();
+        let sqrt_3_over_3 = (3.0_f64).sqrt() / 3.0;
+        let n = s.normal_at(point(sqrt_3_over_3, sqrt_3_over_3, sqrt_3_over_3));
+        assert_eq!(n.normalize(), n);
     }
 }
