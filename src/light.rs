@@ -2,13 +2,13 @@ use crate::color::Color;
 use crate::tuple::Tuple;
 
 #[derive(Debug)]
-struct Light {
-    position: Tuple,
-    intensity: Color,
+pub struct Light {
+    pub position: Tuple,
+    pub intensity: Color,
 }
 
 impl Light {
-    fn new(position: Tuple, intensity: Color) -> Light {
+    pub fn new(position: Tuple, intensity: Color) -> Light {
         Light { position, intensity }
     }
 }

@@ -1,4 +1,7 @@
+use approx::assert_abs_diff_eq;
 use crate::color::{color, Color};
+use crate::light::Light;
+use crate::tuple::Tuple;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Material {
@@ -19,11 +22,41 @@ impl Material {
             shininess: 200.0,
         }
     }
+
+    fn lighting(
+        &self,
+        light: &Light,
+        position: &Tuple,
+        eyev: &Tuple,
+        normalv: &Tuple,
+    ) -> Color {
+        let effective_color = self.color * light.intensity;
+        let lightv = (light.position - *position).normalize();
+        let ambient = effective_color * self.ambient; 
+
+        let light_dot_normal = lightv.dot(normalv);
+        if light_dot_normal <= 0.0 {
+            return ambient;
+        }
+
+        let diffuse = effective_color * self.diffuse * light_dot_normal;
+
+        let reflectv = (-lightv).reflect(normalv);
+        let reflect_dot_eye = reflectv.dot(eyev);
+        if reflect_dot_eye <= 0.0 {
+            return ambient + diffuse;
+        }
+        
+        let factor = reflect_dot_eye.powf(self.shininess);
+        let specular = light.intensity * self.specular * factor;
+        ambient + diffuse + specular
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tuple::{point, vector};
 
     #[test]
     fn test_the_default_material() {
@@ -33,5 +66,60 @@ mod tests {
         assert_eq!(m.diffuse, 0.9);
         assert_eq!(m.specular, 0.9);
         assert_eq!(m.shininess, 200.0);
+    }
+
+    #[test]
+    fn test_lighting_with_eye_between_light_and_surface() {
+        let m = Material::new();
+        let position = point(0.0, 0.0, 0.0);
+        let eyev = vector(0.0, 0.0, -1.0);
+        let normalv = vector(0.0, 0.0, -1.0);
+        let light = Light::new(point(0.0, 0.0, -10.0), color(1.0, 1.0, 1.0));
+        let result = m.lighting(&light, &position, &eyev, &normalv);
+        assert_eq!(result, color(1.9, 1.9, 1.9));
+    }
+
+    #[test]
+    fn test_lighting_with_eye_between_light_and_surface_eye_offset_45deg() {
+        let m = Material::new();
+        let position = point(0.0, 0.0, 0.0);
+        let eyev = vector(0.0, std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2);
+        let normalv = vector(0.0, 0.0, -1.0);
+        let light = Light::new(point(0.0, 0.0, -10.0), color(1.0, 1.0, 1.0));
+        let result = m.lighting(&light, &position, &eyev, &normalv);
+        assert_eq!(result, color(1.0, 1.0, 1.0));
+    }
+
+    #[test]
+    fn test_lighting_with_eye_opposite_surface_light_offset_45deg() {
+        let m = Material::new();
+        let position = point(0.0, 0.0, 0.0);
+        let eyev = vector(0.0, 0.0, -1.0);
+        let normalv = vector(0.0, 0.0, -1.0);
+        let light = Light::new(point(0.0, 10.0, -10.0), color(1.0, 1.0, 1.0));
+        let result = m.lighting(&light, &position, &eyev, &normalv);
+        assert_abs_diff_eq!(result, color(0.7364, 0.7364, 0.7364), epsilon = 0.00001);
+    }
+
+    #[test]
+    fn test_lighting_with_eye_in_the_path_of_reflection_vector() {
+        let m = Material::new();
+        let position = point(0.0, 0.0, 0.0);
+        let eyev = vector(0.0, -std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2);
+        let normalv = vector(0.0, 0.0, -1.0);
+        let light = Light::new(point(0.0, 10.0, -10.0), color(1.0, 1.0, 1.0));
+        let result = m.lighting(&light, &position, &eyev, &normalv);
+        assert_abs_diff_eq!(result, color(1.6364, 1.6364, 1.6364), epsilon = 0.00001);
+    }
+
+    #[test]
+    fn test_lighting_with_the_light_behind_the_surface() {
+        let m = Material::new();
+        let position = point(0.0, 0.0, 0.0);
+        let eyev = vector(0.0, 0.0, -1.0);
+        let normalv = vector(0.0, 0.0, -1.0);
+        let light = Light::new(point(0.0, 0.0, 10.0), color(1.0, 1.0, 1.0));
+        let result = m.lighting(&light, &position, &eyev, &normalv);
+        assert_eq!(result, color(0.1, 0.1, 0.1));
     }
 }
