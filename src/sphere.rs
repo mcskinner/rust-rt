@@ -1,3 +1,4 @@
+use approx::assert_abs_diff_eq;
 use crate::intersection::Intersection;
 use crate::matrix::Matrix;
 use crate::tuple::{point, vector, Tuple};
@@ -45,7 +46,8 @@ impl Sphere {
     }
 
     pub fn normal_at(&self, world_point: Tuple) -> Tuple {
-        world_point - point(0.0, 0.0, 0.0)
+        let local_point = &self.inverse_transform * world_point;
+        local_point - point(0.0, 0.0, 0.0)
     }
 }
 
@@ -185,5 +187,13 @@ mod tests {
         let sqrt_3_over_3 = (3.0_f64).sqrt() / 3.0;
         let n = s.normal_at(point(sqrt_3_over_3, sqrt_3_over_3, sqrt_3_over_3));
         assert_eq!(n.normalize(), n);
+    }
+
+    #[test]
+    fn test_computing_the_normal_on_a_translated_sphere() {
+        let mut s = Sphere::new();
+        s.set_transform(&Matrix::translation(0.0, 1.0, 0.0));
+        let n = s.normal_at(point(0.0, 1.0 + std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2));
+        assert_abs_diff_eq!(n, vector(0.0, std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2));
     }
 }
