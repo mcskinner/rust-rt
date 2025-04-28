@@ -101,3 +101,17 @@ I keep getting warnings about cloning. I'd probably have formed a habit of slapp
 But it doesn't, which I took as a nudge to do more borrowing.
 
 As it has increasingly become the standard for me, I'm going to make it my default going forward. It'd probably be worthwhile to go back and refactor earlier code, but not sure when I'll take that on. The initial 400x400 renders have been fairly slow though (many seconds) which suggests to me some meaningful room for improvement. Maybe worth looking into a profiler.
+
+# Chapter 6
+
+### New file per type
+
+I am doing this more and more, it's not that much overhead to have a file and it's nice to keep things separate.
+
+### Go back and refactor?
+
+This chapter was straightforward, but I'm noticing more and more patterns I used early that I'd reverse now.
+
+- Constructor functions outside of the impl. First up is to move `color` to `Color::new`.
+- How to wrap types / use the newtype pattern. I think newtype is probably what I wanted, but didn't grok the `.0` syntax for accessing the wrapped variable.
+- Importing functions inside the test submodule, which Copilot just did. This makes a lot of sense, probably a bunch I can port there.
