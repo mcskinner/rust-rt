@@ -1,16 +1,16 @@
 use crate::color::{color, Color};
 
-#[derive(Debug)]
-struct Material {
-    color: Color,
-    ambient: f64,
-    diffuse: f64,
-    specular: f64,
-    shininess: f64,
+#[derive(Debug, Clone, PartialEq)]
+pub struct Material {
+    pub color: Color,
+    pub ambient: f64,
+    pub diffuse: f64,
+    pub specular: f64,
+    pub shininess: f64,
 }
 
 impl Material {
-    fn new() -> Material {
+    pub fn new() -> Material {
         Material {
             color: color(1.0, 1.0, 1.0),
             ambient: 0.1,

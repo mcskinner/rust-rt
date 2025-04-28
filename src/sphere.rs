@@ -1,5 +1,6 @@
 use approx::assert_abs_diff_eq;
 use crate::intersection::Intersection;
+use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::tuple::{point, vector, Tuple};
 use crate::ray::Ray;
@@ -8,6 +9,7 @@ use crate::ray::Ray;
 pub struct Sphere {
     transform: Matrix,
     inverse_transform: Matrix,
+    material: Material,
 }
 
 impl Sphere {
@@ -15,12 +17,17 @@ impl Sphere {
         Sphere {
             transform: Matrix::identity(4),
             inverse_transform: Matrix::identity(4),
+            material: Material::new(),
         }
     }
 
     pub fn set_transform(&mut self, m: &Matrix) {
         self.transform = m.clone();
         self.inverse_transform = m.inverse();
+    }
+
+    pub fn set_material(&mut self, m: &Material) {
+        self.material = m.clone();
     }
 
     pub fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
@@ -206,5 +213,20 @@ mod tests {
         s.set_transform(&(Matrix::scaling(1.0, 0.5, 1.0) * Matrix::rotation_z(std::f64::consts::PI / 5.0)));
         let n = s.normal_at(point(0.0, std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2));
         assert_abs_diff_eq!(n, vector(0.0, 0.97014, -0.24254), epsilon = 0.00001);
+    }
+
+    #[test]
+    fn test_sphere_has_default_material() {
+        let s = Sphere::new();
+        assert_eq!(s.material, Material::new());
+    }
+
+    #[test]
+    fn test_sphere_may_be_assigned_a_material() {
+        let mut s = Sphere::new();
+        let mut m = Material::new();
+        m.ambient = 1.0;
+        s.set_material(&m);
+        assert_eq!(s.material, m);
     }
 }
