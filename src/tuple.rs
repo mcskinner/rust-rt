@@ -49,6 +49,10 @@ impl Tuple {
             self.x * other.y - self.y * other.x,
         )
     }
+
+    pub fn reflect(&self, normal: &Tuple) -> Tuple {
+        *self - *normal * 2.0 * self.dot(normal)
+    }
 }
 
 #[cfg(test)]
@@ -210,5 +214,19 @@ mod tests {
         let a = vector(1.0, 2.0, 3.0);
         let b = vector(2.0, 3.0, 4.0);
         assert_eq!(a.cross(&b), vector(-1.0, 2.0, -1.0));
+    }
+
+    #[test]
+    fn test_reflecting_a_vector_approaching_at_45_degrees() {
+        let v = vector(1.0, -1.0, 0.0);
+        let n = vector(0.0, 1.0, 0.0);
+        assert_eq!(v.reflect(&n), vector(1.0, 1.0, 0.0));
+    }
+
+    #[test]
+    fn test_reflecting_a_vector_off_a_slanted_surface() {
+        let v = vector(0.0, -1.0, 0.0);
+        let n = vector(std::f64::consts::FRAC_1_SQRT_2, std::f64::consts::FRAC_1_SQRT_2, 0.0);
+        assert_abs_diff_eq!(v.reflect(&n), vector(1.0, 0.0, 0.0), epsilon = 1e-9);
     }
 }
