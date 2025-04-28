@@ -89,7 +89,7 @@ impl Matrix {
         Tuple::new(self.data[0][0], self.data[1][0], self.data[2][0], self.data[3][0])
     }
 
-    fn transpose(&self) -> Matrix {
+    pub fn transpose(&self) -> Matrix {
         let rows = self.data.len();
         let cols = self.data[0].len();
         

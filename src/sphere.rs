@@ -47,7 +47,10 @@ impl Sphere {
 
     pub fn normal_at(&self, world_point: Tuple) -> Tuple {
         let local_point = &self.inverse_transform * world_point;
-        local_point - point(0.0, 0.0, 0.0)
+        let local_normal = local_point - point(0.0, 0.0, 0.0);
+        let mut world_normal = self.inverse_transform.transpose() * local_normal;
+        world_normal.w = 0.0;
+        world_normal.normalize()
     }
 }
 
@@ -195,5 +198,13 @@ mod tests {
         s.set_transform(&Matrix::translation(0.0, 1.0, 0.0));
         let n = s.normal_at(point(0.0, 1.0 + std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2));
         assert_abs_diff_eq!(n, vector(0.0, std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2));
+    }
+
+    #[test]
+    fn test_computing_the_normal_on_a_transformed_sphere() {
+        let mut s = Sphere::new();
+        s.set_transform(&(Matrix::scaling(1.0, 0.5, 1.0) * Matrix::rotation_z(std::f64::consts::PI / 5.0)));
+        let n = s.normal_at(point(0.0, std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2));
+        assert_abs_diff_eq!(n, vector(0.0, 0.97014, -0.24254), epsilon = 0.00001);
     }
 }
