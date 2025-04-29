@@ -1,10 +1,12 @@
+use approx_derive::AbsDiffEq;
+
 use crate::intersection::{Intersection, Intersections};
 use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::ray::Ray;
 use crate::tuple::{Tuple, point};
 
-#[derive(Debug)]
+#[derive(Debug, AbsDiffEq)]
 pub struct Sphere {
     transform: Matrix,
     inverse_transform: Matrix,

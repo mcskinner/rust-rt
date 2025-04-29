@@ -1,8 +1,10 @@
+use approx_derive::AbsDiffEq;
+
 use crate::color::Color;
 use crate::light::Light;
 use crate::tuple::Tuple;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, AbsDiffEq)]
 pub struct Material {
     pub color: Color,
     pub ambient: f64,
