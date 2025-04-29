@@ -1,7 +1,9 @@
 use crate::color::Color;
+use crate::intersection::Intersections;
 use crate::light::Light;
 use crate::material::Material;
 use crate::matrix::Matrix;
+use crate::ray::Ray;
 use crate::sphere::Sphere;
 use crate::tuple::point;
 
@@ -36,13 +38,22 @@ impl World {
             objects: vec![s1, s2],
         }
     }
+
+    fn intersect(&self, r: &Ray) -> Intersections<'_> {
+        let mut intersections = Vec::new();
+        for object in &self.objects {
+            let xs = object.intersect(r);
+            intersections.extend(xs.xs);
+        }
+        Intersections::new(intersections)
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use approx::assert_abs_diff_eq;
-
     use super::*;
+    use crate::tuple::vector;
+    use approx::assert_abs_diff_eq;
 
     #[test]
     fn test_creating_a_world() {
@@ -72,5 +83,17 @@ mod tests {
         assert_eq!(w.objects.len(), 2);
         assert_abs_diff_eq!(w.objects[0], s1);
         assert_abs_diff_eq!(w.objects[1], s2);
+    }
+
+    #[test]
+    fn test_intersect_a_world_with_a_ray() {
+        let w = World::default();
+        let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+        let xs = w.intersect(&r);
+        assert_eq!(xs.xs.len(), 4);
+        assert_abs_diff_eq!(xs.xs[0].t, 4.0);
+        assert_abs_diff_eq!(xs.xs[1].t, 4.5);
+        assert_abs_diff_eq!(xs.xs[2].t, 5.5);
+        assert_abs_diff_eq!(xs.xs[3].t, 6.0);
     }
 }

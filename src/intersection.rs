@@ -17,7 +17,8 @@ pub struct Intersections<'a> {
 }
 
 impl<'a> Intersections<'a> {
-    pub fn new(xs: Vec<Intersection<'a>>) -> Intersections<'a> {
+    pub fn new(mut xs: Vec<Intersection<'a>>) -> Intersections<'a> {
+        xs.sort_by(|a, b| a.t.partial_cmp(&b.t).unwrap());
         Intersections { xs }
     }
 
