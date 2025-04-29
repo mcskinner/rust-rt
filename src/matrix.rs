@@ -1,5 +1,5 @@
-use approx::{assert_abs_diff_eq, AbsDiffEq};
-use crate::tuple::{point, vector, Tuple};
+use crate::tuple::Tuple;
+use approx::AbsDiffEq;
 use std::ops::Mul;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -21,12 +21,7 @@ impl Matrix {
     }
 
     pub fn from_tuple(t: &Tuple) -> Matrix {
-        Matrix::from_vec(vec![
-            vec![t.x],
-            vec![t.y],
-            vec![t.z],
-            vec![t.w],
-        ])
+        Matrix::from_vec(vec![vec![t.x], vec![t.y], vec![t.z], vec![t.w]])
     }
 
     pub fn translation(x: f64, y: f64, z: f64) -> Matrix {
@@ -84,15 +79,28 @@ impl Matrix {
     }
 
     fn to_tuple(&self) -> Tuple {
-        assert_eq!(self.data.len(), 4, "Matrix must have exactly four rows to convert to Tuple");
-        assert_eq!(self.data[0].len(), 1, "Matrix must have exactly one column to convert to Tuple");
-        Tuple::new(self.data[0][0], self.data[1][0], self.data[2][0], self.data[3][0])
+        assert_eq!(
+            self.data.len(),
+            4,
+            "Matrix must have exactly four rows to convert to Tuple"
+        );
+        assert_eq!(
+            self.data[0].len(),
+            1,
+            "Matrix must have exactly one column to convert to Tuple"
+        );
+        Tuple::new(
+            self.data[0][0],
+            self.data[1][0],
+            self.data[2][0],
+            self.data[3][0],
+        )
     }
 
     pub fn transpose(&self) -> Matrix {
         let rows = self.data.len();
         let cols = self.data[0].len();
-        
+
         let mut transposed = vec![vec![0.0; rows]; cols];
 
         for i in 0..rows {
@@ -104,7 +112,11 @@ impl Matrix {
     }
 
     fn determinant(&self) -> f64 {
-        assert_eq!(self.data.len(), self.data[0].len(), "Determinant is only defined for square matrices");
+        assert_eq!(
+            self.data.len(),
+            self.data[0].len(),
+            "Determinant is only defined for square matrices"
+        );
         if self.data.len() == 2 {
             return self.data[0][0] * self.data[1][1] - self.data[0][1] * self.data[1][0];
         }
@@ -139,11 +151,7 @@ impl Matrix {
 
     fn cofactor(&self, row: usize, col: usize) -> f64 {
         let minor = self.minor(row, col);
-        if (row + col) % 2 == 0 {
-            minor
-        } else {
-            -minor
-        }
+        if (row + col) % 2 == 0 { minor } else { -minor }
     }
 
     fn is_invertible(&self) -> bool {
@@ -171,10 +179,14 @@ impl Mul for &Matrix {
         let l = self.data.len();
         let m = self.data[0].len();
         let n = other.data[0].len();
-        assert_eq!(m, other.data.len(), "Matrix dimensions do not match for multiplication");
+        assert_eq!(
+            m,
+            other.data.len(),
+            "Matrix dimensions do not match for multiplication"
+        );
 
         let mut result = vec![vec![0.0; n]; l];
-        
+
         for i in 0..l {
             for j in 0..m {
                 for k in 0..n {
@@ -237,6 +249,8 @@ impl AbsDiffEq for Matrix {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tuple::{point, vector};
+    use approx::assert_abs_diff_eq;
 
     #[test]
     fn test_a_4x4_matrix() {
@@ -389,10 +403,7 @@ mod tests {
             vec![0.0, 6.0, -3.0],
         ]);
         let submatrix = m.submatrix(0, 2);
-        let expected = Matrix::from_vec(vec![
-            vec![-3.0, 2.0],
-            vec![0.0, 6.0],
-        ]);
+        let expected = Matrix::from_vec(vec![vec![-3.0, 2.0], vec![0.0, 6.0]]);
         assert_eq!(submatrix, expected);
     }
 
@@ -618,7 +629,14 @@ mod tests {
         let p = point(0.0, 1.0, 0.0);
         let half_quarter = Matrix::rotation_x(std::f64::consts::FRAC_PI_4);
         let full_quarter = Matrix::rotation_x(std::f64::consts::FRAC_PI_2);
-        assert_abs_diff_eq!(half_quarter * p, point(0.0, std::f64::consts::FRAC_1_SQRT_2, std::f64::consts::FRAC_1_SQRT_2));
+        assert_abs_diff_eq!(
+            half_quarter * p,
+            point(
+                0.0,
+                std::f64::consts::FRAC_1_SQRT_2,
+                std::f64::consts::FRAC_1_SQRT_2
+            )
+        );
         assert_abs_diff_eq!(full_quarter * p, point(0.0, 0.0, 1.0));
     }
 
@@ -627,7 +645,14 @@ mod tests {
         let p = point(0.0, 1.0, 0.0);
         let half_quarter = Matrix::rotation_x(std::f64::consts::FRAC_PI_4);
         let inv = half_quarter.inverse();
-        assert_abs_diff_eq!(inv * p, point(0.0, std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2));
+        assert_abs_diff_eq!(
+            inv * p,
+            point(
+                0.0,
+                std::f64::consts::FRAC_1_SQRT_2,
+                -std::f64::consts::FRAC_1_SQRT_2
+            )
+        );
     }
 
     #[test]
@@ -635,7 +660,14 @@ mod tests {
         let p = point(0.0, 0.0, 1.0);
         let half_quarter = Matrix::rotation_y(std::f64::consts::FRAC_PI_4);
         let full_quarter = Matrix::rotation_y(std::f64::consts::FRAC_PI_2);
-        assert_abs_diff_eq!(half_quarter * p, point(std::f64::consts::FRAC_1_SQRT_2, 0.0, std::f64::consts::FRAC_1_SQRT_2));
+        assert_abs_diff_eq!(
+            half_quarter * p,
+            point(
+                std::f64::consts::FRAC_1_SQRT_2,
+                0.0,
+                std::f64::consts::FRAC_1_SQRT_2
+            )
+        );
         assert_abs_diff_eq!(full_quarter * p, point(1.0, 0.0, 0.0));
     }
 
@@ -644,7 +676,14 @@ mod tests {
         let p = point(0.0, 1.0, 0.0);
         let half_quarter = Matrix::rotation_z(std::f64::consts::FRAC_PI_4);
         let full_quarter = Matrix::rotation_z(std::f64::consts::FRAC_PI_2);
-        assert_abs_diff_eq!(half_quarter * p, point(-std::f64::consts::FRAC_1_SQRT_2, std::f64::consts::FRAC_1_SQRT_2, 0.0));
+        assert_abs_diff_eq!(
+            half_quarter * p,
+            point(
+                -std::f64::consts::FRAC_1_SQRT_2,
+                std::f64::consts::FRAC_1_SQRT_2,
+                0.0
+            )
+        );
         assert_abs_diff_eq!(full_quarter * p, point(-1.0, 0.0, 0.0));
     }
 

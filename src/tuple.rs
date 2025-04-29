@@ -1,6 +1,5 @@
-use approx::assert_abs_diff_eq;
 use approx_derive::AbsDiffEq;
-use derive_more::{Add, Sub, Neg, Mul, Div};
+use derive_more::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Debug, Clone, Copy, PartialEq, AbsDiffEq, Add, Sub, Neg, Mul, Div)]
 pub struct Tuple {
@@ -59,6 +58,7 @@ impl Tuple {
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
+    use approx::assert_abs_diff_eq;
 
     #[test]
     fn test_tuple_with_w1_is_a_point() {
@@ -192,7 +192,11 @@ mod tests {
     #[test]
     fn normalizing_vector_123() {
         let v = vector(1.0, 2.0, 3.0);
-        assert_abs_diff_eq!(v.normalize(), vector(0.26726, 0.53452, 0.80178), epsilon = 0.00001);
+        assert_abs_diff_eq!(
+            v.normalize(),
+            vector(0.26726, 0.53452, 0.80178),
+            epsilon = 0.00001
+        );
     }
 
     #[test]
@@ -226,7 +230,11 @@ mod tests {
     #[test]
     fn test_reflecting_a_vector_off_a_slanted_surface() {
         let v = vector(0.0, -1.0, 0.0);
-        let n = vector(std::f64::consts::FRAC_1_SQRT_2, std::f64::consts::FRAC_1_SQRT_2, 0.0);
+        let n = vector(
+            std::f64::consts::FRAC_1_SQRT_2,
+            std::f64::consts::FRAC_1_SQRT_2,
+            0.0,
+        );
         assert_abs_diff_eq!(v.reflect(&n), vector(1.0, 0.0, 0.0), epsilon = 1e-9);
     }
 }

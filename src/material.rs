@@ -1,7 +1,6 @@
 use crate::color::Color;
 use crate::light::Light;
 use crate::tuple::Tuple;
-use approx::assert_abs_diff_eq;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Material {
@@ -57,6 +56,7 @@ impl Material {
 mod tests {
     use super::*;
     use crate::tuple::{point, vector};
+    use approx::assert_abs_diff_eq;
 
     #[test]
     fn test_the_default_material() {

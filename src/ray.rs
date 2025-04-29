@@ -1,5 +1,5 @@
 use crate::matrix::Matrix;
-use crate::tuple::{point, vector, Tuple};
+use crate::tuple::Tuple;
 
 pub struct Ray {
     pub origin: Tuple,
@@ -26,6 +26,7 @@ impl Ray {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tuple::{point, vector};
 
     #[test]
     fn test_creating_and_querying_a_ray() {

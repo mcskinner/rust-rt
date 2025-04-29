@@ -1,4 +1,3 @@
-use approx::assert_abs_diff_eq;
 use approx_derive::AbsDiffEq;
 use derive_more::{Add, Mul, Sub};
 use std::ops::Mul;
@@ -31,6 +30,7 @@ impl Mul<Color> for Color {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use approx::assert_abs_diff_eq;
 
     #[test]
     fn test_color() {

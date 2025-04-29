@@ -2,8 +2,7 @@ use crate::intersection::{Intersection, Intersections};
 use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::ray::Ray;
-use crate::tuple::{Tuple, point, vector};
-use approx::assert_abs_diff_eq;
+use crate::tuple::{Tuple, point};
 
 #[derive(Debug)]
 pub struct Sphere {
@@ -73,6 +72,8 @@ impl PartialEq for Sphere {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tuple::vector;
+    use approx::assert_abs_diff_eq;
 
     #[test]
     fn test_ray_intersects_a_sphere_at_two_points() {
