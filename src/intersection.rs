@@ -12,13 +12,20 @@ impl Intersection<'_> {
     }
 
     fn prepare_computations(&self, r: &crate::ray::Ray) -> Computations {
-        let hit_position = r.position(self.t);
+        let eyev = -r.direction;
+        let point = r.position(self.t);
+        let mut normalv = self.object.normal_at(point);
+        let inside = eyev.dot(&normalv) < 0.0;
+        if inside {
+            normalv = -normalv;
+        }
         Computations {
             t: self.t,
             object: self.object,
-            point: hit_position,
-            eye_v: -r.direction,
-            normal_v: self.object.normal_at(hit_position),
+            point,
+            eyev,
+            normalv,
+            inside,
         }
     }
 }
@@ -27,8 +34,9 @@ pub struct Computations<'a> {
     pub t: f64,
     pub object: &'a Sphere,
     pub point: crate::tuple::Tuple,
-    pub eye_v: crate::tuple::Tuple,
-    pub normal_v: crate::tuple::Tuple,
+    pub eyev: crate::tuple::Tuple,
+    pub normalv: crate::tuple::Tuple,
+    pub inside: bool,
 }
 
 pub struct Intersections<'a> {
@@ -129,7 +137,28 @@ mod tests {
         assert_eq!(comps.t, i.t);
         assert_eq!(comps.object, i.object);
         assert_eq!(comps.point, point(0.0, 0.0, -1.0));
-        assert_eq!(comps.eye_v, vector(0.0, 0.0, -1.0));
-        assert_eq!(comps.normal_v, vector(0.0, 0.0, -1.0));
+        assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
+        assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
+    }
+
+    #[test]
+    fn test_hit_from_the_outside() {
+        let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+        let shape = Sphere::new();
+        let i = Intersection::new(4.0, &shape);
+        let comps = i.prepare_computations(&r);
+        assert_eq!(comps.inside, false);
+    }
+
+    #[test]
+    fn test_hit_from_the_inside() {
+        let r = Ray::new(point(0.0, 0.0, 0.0), vector(0.0, 0.0, 1.0));
+        let shape = Sphere::new();
+        let i = Intersection::new(1.0, &shape);
+        let comps = i.prepare_computations(&r);
+        assert_eq!(comps.point, point(0.0, 0.0, 1.0));
+        assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
+        assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
+        assert_eq!(comps.inside, true);
     }
 }
