@@ -10,6 +10,25 @@ impl Intersection<'_> {
     pub fn new(t: f64, object: &Sphere) -> Intersection {
         Intersection { t, object }
     }
+
+    fn prepare_computations(&self, r: &crate::ray::Ray) -> Computations {
+        let hit_position = r.position(self.t);
+        Computations {
+            t: self.t,
+            object: self.object,
+            point: hit_position,
+            eye_v: -r.direction,
+            normal_v: self.object.normal_at(hit_position),
+        }
+    }
+}
+
+pub struct Computations<'a> {
+    pub t: f64,
+    pub object: &'a Sphere,
+    pub point: crate::tuple::Tuple,
+    pub eye_v: crate::tuple::Tuple,
+    pub normal_v: crate::tuple::Tuple,
 }
 
 pub struct Intersections<'a> {
@@ -40,6 +59,8 @@ impl<'a> Intersections<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ray::Ray;
+    use crate::tuple::{point, vector};
 
     #[test]
     fn test_intersection() {
@@ -97,5 +118,18 @@ mod tests {
         let expected = i4.clone();
         let xs = Intersections::new(vec![i1, i2, i3, i4]);
         assert_eq!(xs.hit().unwrap(), &expected);
+    }
+
+    #[test]
+    fn test_precomputing_the_state_of_an_intersection() {
+        let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+        let s = Sphere::new();
+        let i = Intersection::new(4.0, &s);
+        let comps = i.prepare_computations(&r);
+        assert_eq!(comps.t, i.t);
+        assert_eq!(comps.object, i.object);
+        assert_eq!(comps.point, point(0.0, 0.0, -1.0));
+        assert_eq!(comps.eye_v, vector(0.0, 0.0, -1.0));
+        assert_eq!(comps.normal_v, vector(0.0, 0.0, -1.0));
     }
 }
