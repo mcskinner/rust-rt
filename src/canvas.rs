@@ -1,4 +1,4 @@
-use crate::color::{color, Color};
+use crate::color::Color;
 
 pub struct Canvas {
     pub width: usize,
@@ -7,8 +7,12 @@ pub struct Canvas {
 }
 
 pub fn canvas(width: usize, height: usize) -> Canvas {
-    let pixels = vec![vec![color(0.0, 0.0, 0.0); width]; height];
-    Canvas { width, height, pixels }
+    let pixels = vec![vec![Color::new(0.0, 0.0, 0.0); width]; height];
+    Canvas {
+        width,
+        height,
+        pixels,
+    }
 }
 
 impl Canvas {
@@ -57,7 +61,6 @@ impl Canvas {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::color::color;
 
     #[test]
     fn test_canvas() {
@@ -66,7 +69,7 @@ mod tests {
         assert_eq!(c.height, 20);
         for x in 0..10 {
             for y in 0..20 {
-                assert_eq!(c.pixels[y][x], color(0.0, 0.0, 0.0));
+                assert_eq!(c.pixels[y][x], Color::new(0.0, 0.0, 0.0));
             }
         }
     }
@@ -74,7 +77,7 @@ mod tests {
     #[test]
     fn test_write_pixel() {
         let mut c = canvas(10, 20);
-        let red = color(1.0, 0.0, 0.0);
+        let red = Color::new(1.0, 0.0, 0.0);
         c.write_pixel(2, 3, red);
         assert_eq!(c.pixel_at(2, 3), red);
     }
@@ -91,16 +94,25 @@ mod tests {
     #[test]
     fn test_ppm_pixel_data() {
         let mut c = canvas(5, 3);
-        let c1 = color(1.5, 0.0, 0.0);
-        let c2 = color(0.0, 0.5, 0.0);
-        let c3 = color(-0.5, 0.0, 1.0);
+        let c1 = Color::new(1.5, 0.0, 0.0);
+        let c2 = Color::new(0.0, 0.5, 0.0);
+        let c3 = Color::new(-0.5, 0.0, 1.0);
         c.write_pixel(0, 0, c1);
         c.write_pixel(2, 1, c2);
         c.write_pixel(4, 2, c3);
         let ppm = c.to_ppm();
-        assert_eq!(ppm.lines().nth(3).unwrap(), "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0");
-        assert_eq!(ppm.lines().nth(4).unwrap(), "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0");
-        assert_eq!(ppm.lines().nth(5).unwrap(), "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255");
+        assert_eq!(
+            ppm.lines().nth(3).unwrap(),
+            "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+        );
+        assert_eq!(
+            ppm.lines().nth(4).unwrap(),
+            "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0"
+        );
+        assert_eq!(
+            ppm.lines().nth(5).unwrap(),
+            "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255"
+        );
     }
 
     #[test]
@@ -108,13 +120,25 @@ mod tests {
         let mut c = canvas(10, 2);
         for i in 0..10 {
             for j in 0..2 {
-                c.write_pixel(i, j, color(1.0, 0.8, 0.6));
+                c.write_pixel(i, j, Color::new(1.0, 0.8, 0.6));
             }
         }
         let ppm = c.to_ppm();
-        assert_eq!(ppm.lines().nth(3).unwrap(), "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204");
-        assert_eq!(ppm.lines().nth(4).unwrap(), "153 255 204 153 255 204 153 255 204 153 255 204 153");
-        assert_eq!(ppm.lines().nth(5).unwrap(), "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204");
-        assert_eq!(ppm.lines().nth(6).unwrap(), "153 255 204 153 255 204 153 255 204 153 255 204 153");
+        assert_eq!(
+            ppm.lines().nth(3).unwrap(),
+            "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204"
+        );
+        assert_eq!(
+            ppm.lines().nth(4).unwrap(),
+            "153 255 204 153 255 204 153 255 204 153 255 204 153"
+        );
+        assert_eq!(
+            ppm.lines().nth(5).unwrap(),
+            "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204"
+        );
+        assert_eq!(
+            ppm.lines().nth(6).unwrap(),
+            "153 255 204 153 255 204 153 255 204 153 255 204 153"
+        );
     }
 }

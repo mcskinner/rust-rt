@@ -1,9 +1,9 @@
-use approx::assert_abs_diff_eq;
 use crate::intersection::{Intersection, Intersections};
 use crate::material::Material;
 use crate::matrix::Matrix;
-use crate::tuple::{point, vector, Tuple};
 use crate::ray::Ray;
+use crate::tuple::{Tuple, point, vector};
+use approx::assert_abs_diff_eq;
 
 #[derive(Debug)]
 pub struct Sphere {
@@ -48,7 +48,10 @@ impl Sphere {
         } else {
             let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
             let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
-            return Intersections::new(vec![Intersection::new(t1, self), Intersection::new(t2, self)]);
+            return Intersections::new(vec![
+                Intersection::new(t1, self),
+                Intersection::new(t2, self),
+            ]);
         }
     }
 
@@ -70,7 +73,7 @@ impl PartialEq for Sphere {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_ray_intersects_a_sphere_at_two_points() {
         let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
@@ -203,15 +206,32 @@ mod tests {
     fn test_computing_the_normal_on_a_translated_sphere() {
         let mut s = Sphere::new();
         s.set_transform(&Matrix::translation(0.0, 1.0, 0.0));
-        let n = s.normal_at(point(0.0, 1.0 + std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2));
-        assert_abs_diff_eq!(n, vector(0.0, std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2));
+        let n = s.normal_at(point(
+            0.0,
+            1.0 + std::f64::consts::FRAC_1_SQRT_2,
+            -std::f64::consts::FRAC_1_SQRT_2,
+        ));
+        assert_abs_diff_eq!(
+            n,
+            vector(
+                0.0,
+                std::f64::consts::FRAC_1_SQRT_2,
+                -std::f64::consts::FRAC_1_SQRT_2
+            )
+        );
     }
 
     #[test]
     fn test_computing_the_normal_on_a_transformed_sphere() {
         let mut s = Sphere::new();
-        s.set_transform(&(Matrix::scaling(1.0, 0.5, 1.0) * Matrix::rotation_z(std::f64::consts::PI / 5.0)));
-        let n = s.normal_at(point(0.0, std::f64::consts::FRAC_1_SQRT_2, -std::f64::consts::FRAC_1_SQRT_2));
+        s.set_transform(
+            &(Matrix::scaling(1.0, 0.5, 1.0) * Matrix::rotation_z(std::f64::consts::PI / 5.0)),
+        );
+        let n = s.normal_at(point(
+            0.0,
+            std::f64::consts::FRAC_1_SQRT_2,
+            -std::f64::consts::FRAC_1_SQRT_2,
+        ));
         assert_abs_diff_eq!(n, vector(0.0, 0.97014, -0.24254), epsilon = 0.00001);
     }
 

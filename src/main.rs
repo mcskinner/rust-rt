@@ -8,11 +8,11 @@ mod ray;
 mod sphere;
 mod tuple;
 use crate::canvas::canvas;
-use crate::color::color;
+use crate::color::Color;
 use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::sphere::Sphere;
-use crate::tuple::{point, vector, Tuple};
+use crate::tuple::{Tuple, point, vector};
 
 #[derive(Debug, Clone, Copy)]
 struct Env {
@@ -46,7 +46,7 @@ impl Projectile {
 fn draw_box(c: &mut canvas::Canvas, x: usize, y: usize) {
     for i in 0..5 {
         for j in 0..5 {
-            c.write_pixel(x + i, c.height - (y + j) - 1, color(1.0, 0.0, 0.0));
+            c.write_pixel(x + i, c.height - (y + j) - 1, Color::new(1.0, 0.0, 0.0));
         }
     }
 }
@@ -99,12 +99,12 @@ fn render_sphere() {
     let mut c = canvas(size, size);
     let mut s = Sphere::new();
     let mut m = Material::new();
-    m.color = color(1.0, 0.2, 1.0);
+    m.color = Color::new(1.0, 0.2, 1.0);
     s.set_material(&m);
     s.set_transform(&Matrix::translation(0.0, 0.0, 2.0));
 
     let camera = point(0.0, 0.0, -5.0);
-    let light = light::Light::new(point(-10.0, 10.0, -10.0), color(1.0, 1.0, 1.0));
+    let light = light::Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
     for y in 0..size {
         for x in 0..size {

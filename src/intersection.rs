@@ -34,14 +34,11 @@ impl<'a> Intersections<'a> {
 
         hit
     }
-    
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ray::Ray;
-    use crate::tuple::{point, vector};
 
     #[test]
     fn test_intersection() {
