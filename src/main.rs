@@ -7,6 +7,7 @@ mod matrix;
 mod ray;
 mod sphere;
 mod tuple;
+mod world;
 use crate::canvas::canvas;
 use crate::color::Color;
 use crate::material::Material;
