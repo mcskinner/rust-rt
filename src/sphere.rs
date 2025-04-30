@@ -10,7 +10,7 @@ use crate::tuple::{Tuple, point};
 pub struct Sphere {
     transform: Matrix,
     inverse_transform: Matrix,
-    material: Material,
+    pub material: Material,
 }
 
 impl Sphere {

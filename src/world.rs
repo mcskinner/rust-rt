@@ -1,5 +1,5 @@
 use crate::color::Color;
-use crate::intersection::Intersections;
+use crate::intersection::{Computations, Intersections};
 use crate::light::Light;
 use crate::material::Material;
 use crate::matrix::Matrix;
@@ -47,11 +47,24 @@ impl World {
         }
         Intersections::new(intersections)
     }
+
+    fn shade_hit(&self, comps: &Computations) -> Color {
+        let mut color = Color::new(0.0, 0.0, 0.0);
+        for light in &self.lights {
+            color = color
+                + comps
+                    .object
+                    .material
+                    .lighting(light, &comps.point, &comps.eyev, &comps.normalv);
+        }
+        color
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::intersection::Intersection;
     use crate::tuple::vector;
     use approx::assert_abs_diff_eq;
 
@@ -95,5 +108,16 @@ mod tests {
         assert_abs_diff_eq!(xs.xs[1].t, 4.5);
         assert_abs_diff_eq!(xs.xs[2].t, 5.5);
         assert_abs_diff_eq!(xs.xs[3].t, 6.0);
+    }
+
+    #[test]
+    fn test_shading_an_intersection() {
+        let w = World::default();
+        let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+        let shape = &w.objects[0];
+        let i = Intersection::new(4.0, shape);
+        let comps = i.prepare_computations(&r);
+        let c = w.shade_hit(&comps);
+        assert_abs_diff_eq!(c, Color::new(0.38066, 0.47583, 0.2855), epsilon = 0.00001);
     }
 }
