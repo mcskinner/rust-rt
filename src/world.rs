@@ -120,4 +120,16 @@ mod tests {
         let c = w.shade_hit(&comps);
         assert_abs_diff_eq!(c, Color::new(0.38066, 0.47583, 0.2855), epsilon = 0.00001);
     }
+
+    #[test]
+    fn test_shading_an_intersection_from_inside() {
+        let mut w = World::default();
+        w.lights[0] = Light::new(point(0.0, 0.25, 0.0), Color::new(1.0, 1.0, 1.0));
+        let r = Ray::new(point(0.0, 0.0, 0.0), vector(0.0, 0.0, 1.0));
+        let shape = &w.objects[1];
+        let i = Intersection::new(0.5, shape);
+        let comps = i.prepare_computations(&r);
+        let c = w.shade_hit(&comps);
+        assert_abs_diff_eq!(c, Color::new(0.90498, 0.90498, 0.90498), epsilon = 0.00001);
+    }
 }
