@@ -59,6 +59,16 @@ impl World {
         }
         color
     }
+
+    fn color_at(&self, r: &Ray) -> Color {
+        let i = self.intersect(r);
+        if let Some(hit) = i.hit() {
+            let comps = hit.prepare_computations(r);
+            self.shade_hit(&comps)
+        } else {
+            Color::new(0.0, 0.0, 0.0)
+        }
+    }
 }
 
 #[cfg(test)]
@@ -131,5 +141,42 @@ mod tests {
         let comps = i.prepare_computations(&r);
         let c = w.shade_hit(&comps);
         assert_abs_diff_eq!(c, Color::new(0.90498, 0.90498, 0.90498), epsilon = 0.00001);
+    }
+
+    #[test]
+    fn test_color_when_a_ray_misses() {
+        let w = World::default();
+        let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 1.0, 0.0));
+        let c = w.color_at(&r);
+        assert_eq!(c, Color::new(0.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn test_color_when_a_ray_hits() {
+        let w = World::default();
+        let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+        let c = w.color_at(&r);
+        assert_abs_diff_eq!(c, Color::new(0.38066, 0.47583, 0.2855), epsilon = 0.00001);
+    }
+
+    #[test]
+    fn test_color_with_an_intersection_behind_the_ray() {
+        let mut w = World::default();
+
+        let mut outer = w.objects[0].clone();
+        let mut outer_material = outer.material.clone();
+        outer_material.ambient = 1.0;
+        outer.set_material(&outer_material);
+
+        let mut inner = w.objects[1].clone();
+        let mut inner_material = inner.material.clone();
+        inner_material.ambient = 1.0;
+        inner.set_material(&inner_material);
+
+        w.objects = vec![outer, inner];
+
+        let r = Ray::new(point(0.0, 0.0, 0.75), vector(0.0, 0.0, -1.0));
+        let c = w.color_at(&r);
+        assert_eq!(c, inner_material.color);
     }
 }

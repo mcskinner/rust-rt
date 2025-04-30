@@ -6,7 +6,7 @@ use crate::matrix::Matrix;
 use crate::ray::Ray;
 use crate::tuple::{Tuple, point};
 
-#[derive(Debug, AbsDiffEq)]
+#[derive(Debug, Clone, AbsDiffEq)]
 pub struct Sphere {
     transform: Matrix,
     inverse_transform: Matrix,
