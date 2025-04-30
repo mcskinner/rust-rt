@@ -78,6 +78,20 @@ impl Matrix {
         m
     }
 
+    pub fn view_transform(from: Tuple, to: Tuple, up: Tuple) -> Matrix {
+        let forward = (to - from).normalize();
+        let left = forward.cross(&up.normalize());
+        let true_up = left.cross(&forward);
+
+        let orientation = Matrix::from_vec(vec![
+            vec![left.x, left.y, left.z, 0.0],
+            vec![true_up.x, true_up.y, true_up.z, 0.0],
+            vec![-forward.x, -forward.y, -forward.z, 0.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ]);
+        orientation * Matrix::translation(-from.x, -from.y, -from.z)
+    }
+
     fn to_tuple(&self) -> Tuple {
         assert_eq!(
             self.data.len(),
@@ -755,5 +769,50 @@ mod tests {
 
         let t = c * b * a;
         assert_abs_diff_eq!(t * p, point(15.0, 0.0, 7.0), epsilon = 1e-9);
+    }
+
+    #[test]
+    fn test_view_transform_for_the_default_orientation() {
+        let from = point(0.0, 0.0, 0.0);
+        let to = point(0.0, 0.0, -1.0);
+        let up = vector(0.0, 1.0, 0.0);
+        let t = Matrix::view_transform(from, to, up);
+        assert_eq!(t, Matrix::identity(4));
+    }
+
+    #[test]
+    fn test_view_transform_looking_in_positive_z_direction() {
+        let from = point(0.0, 0.0, 0.0);
+        let to = point(0.0, 0.0, 1.0);
+        let up = vector(0.0, 1.0, 0.0);
+        let t = Matrix::view_transform(from, to, up);
+        assert_eq!(t, Matrix::scaling(-1.0, 1.0, -1.0));
+    }
+
+    #[test]
+    fn test_view_transform_moves_the_world() {
+        let from = point(0.0, 0.0, 8.0);
+        let to = point(0.0, 0.0, 0.0);
+        let up = vector(0.0, 1.0, 0.0);
+        let t = Matrix::view_transform(from, to, up);
+        assert_eq!(t, Matrix::translation(0.0, 0.0, -8.0));
+    }
+
+    #[test]
+    fn test_an_arbitrary_view_transform() {
+        let from = point(1.0, 3.0, 2.0);
+        let to = point(4.0, -2.0, 8.0);
+        let up = vector(1.0, 1.0, 0.0);
+        let t = Matrix::view_transform(from, to, up);
+        assert_abs_diff_eq!(
+            t,
+            Matrix::from_vec(vec![
+                vec![-0.50709, 0.50709, 0.67612, -2.36643],
+                vec![0.76772, 0.60609, 0.12122, -2.82843],
+                vec![-0.35857, 0.59761, -0.71714, 0.0],
+                vec![0.00000, 0.00000, 0.00000, 1.00000]
+            ]),
+            epsilon = 0.00001
+        );
     }
 }
