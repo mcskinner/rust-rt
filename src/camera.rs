@@ -1,8 +1,10 @@
+use crate::canvas::Canvas;
 use crate::matrix::Matrix;
 use crate::ray::Ray;
 use crate::tuple::point;
+use crate::world::World;
 
-struct Camera {
+pub struct Camera {
     width: usize,
     height: usize,
     fov: f64,
@@ -35,12 +37,12 @@ impl Camera {
         }
     }
 
-    fn set_transform(&mut self, transform: &Matrix) {
+    pub fn set_transform(&mut self, transform: &Matrix) {
         self.transform = transform.clone();
         self.inverse_transform = transform.inverse();
     }
 
-    fn ray_for_pixel(&self, px: usize, py: usize) -> Ray {
+    pub fn ray_for_pixel(&self, px: usize, py: usize) -> Ray {
         let x_offset = (px as f64 + 0.5) * self.pixel_size;
         let y_offset = (py as f64 + 0.5) * self.pixel_size;
         let world_x = self.half_width - x_offset;
@@ -49,6 +51,18 @@ impl Camera {
         let pixel = &self.inverse_transform * point(world_x, world_y, -1.0);
         let direction = (pixel - origin).normalize();
         Ray::new(origin, direction)
+    }
+
+    pub fn render(&self, world: &World) -> Canvas {
+        let mut canvas = Canvas::new(self.width, self.height);
+        for y in 0..(self.height) {
+            for x in 0..(self.width) {
+                let ray = self.ray_for_pixel(x, y);
+                let color = world.color_at(&ray);
+                canvas.write_pixel(x, y, color);
+            }
+        }
+        canvas
     }
 }
 

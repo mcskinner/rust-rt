@@ -7,15 +7,18 @@ pub struct Canvas {
 }
 
 pub fn canvas(width: usize, height: usize) -> Canvas {
-    let pixels = vec![vec![Color::new(0.0, 0.0, 0.0); width]; height];
-    Canvas {
-        width,
-        height,
-        pixels,
-    }
+    Canvas::new(width, height)
 }
 
 impl Canvas {
+    pub fn new(width: usize, height: usize) -> Canvas {
+        let pixels = vec![vec![Color::new(0.0, 0.0, 0.0); width]; height];
+        Canvas {
+            width,
+            height,
+            pixels,
+        }
+    }
     pub fn pixel_at(&self, x: usize, y: usize) -> Color {
         self.pixels[y][x]
     }

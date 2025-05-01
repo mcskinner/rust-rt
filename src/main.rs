@@ -9,12 +9,18 @@ mod ray;
 mod sphere;
 mod tuple;
 mod world;
+
+use crate::camera::Camera;
 use crate::canvas::canvas;
 use crate::color::Color;
+use crate::light::Light;
 use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::sphere::Sphere;
 use crate::tuple::{Tuple, point, vector};
+use crate::world::World;
+
+use std::f64::consts::{FRAC_PI_2, FRAC_PI_3, FRAC_PI_4};
 
 #[derive(Debug, Clone, Copy)]
 struct Env {
@@ -133,6 +139,83 @@ fn render_sphere() {
     std::io::Write::write_all(&mut file, ppm.as_bytes()).unwrap();
 }
 
+fn render_chapter7_scene() {
+    let mut floor = Sphere::new();
+    let mut m = Material::new();
+    m.color = Color::new(1.0, 0.9, 0.9);
+    m.specular = 0.0;
+    floor.set_material(&m);
+    floor.set_transform(&Matrix::scaling(10.0, 0.01, 10.0));
+
+    let mut left_wall = Sphere::new();
+    left_wall.set_material(&m);
+    left_wall.set_transform(
+        &(Matrix::translation(0.0, 0.0, 5.0)
+            * Matrix::rotation_y(-FRAC_PI_4)
+            * Matrix::rotation_x(FRAC_PI_2)
+            * Matrix::scaling(10.0, 0.01, 10.0)),
+    );
+
+    let mut right_wall = Sphere::new();
+    right_wall.set_material(&m);
+    right_wall.set_transform(
+        &(Matrix::translation(0.0, 0.0, 5.0)
+            * Matrix::rotation_y(FRAC_PI_4)
+            * Matrix::rotation_x(FRAC_PI_2)
+            * Matrix::scaling(10.0, 0.01, 10.0)),
+    );
+
+    let mut middle = Sphere::new();
+    let mut m = Material::new();
+    m.color = Color::new(0.1, 1.0, 0.5);
+    m.diffuse = 0.7;
+    m.specular = 0.3;
+    middle.set_material(&m);
+    middle.set_transform(&Matrix::translation(-0.5, 1.0, 0.5));
+
+    let mut right = Sphere::new();
+    let mut m = Material::new();
+    m.color = Color::new(0.5, 1.0, 0.1);
+    m.diffuse = 0.7;
+    m.specular = 0.3;
+    right.set_material(&m);
+    right.set_transform(&(Matrix::translation(1.5, 0.5, -0.5) * Matrix::scaling(0.5, 0.5, 0.5)));
+
+    let mut left = Sphere::new();
+    let mut m = Material::new();
+    m.color = Color::new(1.0, 0.8, 0.1);
+    m.diffuse = 0.7;
+    m.specular = 0.3;
+    left.set_material(&m);
+    left.set_transform(
+        &(Matrix::translation(-1.5, 0.33, -0.75) * Matrix::scaling(0.33, 0.33, 0.33)),
+    );
+
+    let light = Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
+
+    let mut camera = Camera::new(400, 200, FRAC_PI_3);
+    camera.set_transform(&Matrix::view_transform(
+        point(0.0, 1.5, -5.0),
+        point(0.0, 1.0, 0.0),
+        vector(0.0, 1.0, 0.0),
+    ));
+
+    let world = World::new()
+        .add_object(floor)
+        .add_object(left_wall)
+        .add_object(right_wall)
+        .add_object(middle)
+        .add_object(left)
+        .add_object(right)
+        .add_light(light);
+
+    let canvas = camera.render(&world);
+
+    let ppm = canvas.to_ppm();
+    let mut file = std::fs::File::create("chapter7.ppm").unwrap();
+    std::io::Write::write_all(&mut file, ppm.as_bytes()).unwrap();
+}
+
 fn main() {
-    render_sphere();
+    render_chapter7_scene();
 }

@@ -7,20 +7,20 @@ use crate::ray::Ray;
 use crate::sphere::Sphere;
 use crate::tuple::point;
 
-struct World {
+pub struct World {
     lights: Vec<Light>,
     objects: Vec<Sphere>,
 }
 
 impl World {
-    fn new() -> World {
+    pub fn new() -> World {
         World {
             lights: Vec::new(),
             objects: Vec::new(),
         }
     }
 
-    fn default() -> World {
+    pub fn default() -> World {
         let light = Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
         let mut s1 = Sphere::new();
@@ -37,6 +37,16 @@ impl World {
             lights: vec![light],
             objects: vec![s1, s2],
         }
+    }
+
+    pub fn add_object(mut self, floor: Sphere) -> Self {
+        self.objects.push(floor);
+        self
+    }
+
+    pub fn add_light(mut self, light: Light) -> Self {
+        self.lights.push(light);
+        self
     }
 
     fn intersect(&self, r: &Ray) -> Intersections<'_> {
@@ -60,7 +70,7 @@ impl World {
         color
     }
 
-    fn color_at(&self, r: &Ray) -> Color {
+    pub fn color_at(&self, r: &Ray) -> Color {
         let i = self.intersect(r);
         if let Some(hit) = i.hit() {
             let comps = hit.prepare_computations(r);
