@@ -5,7 +5,7 @@ use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::ray::Ray;
 use crate::sphere::Sphere;
-use crate::tuple::point;
+use crate::tuple::{Tuple, point};
 
 pub struct World {
     lights: Vec<Light>,
@@ -81,6 +81,14 @@ impl World {
         } else {
             Color::new(0.0, 0.0, 0.0)
         }
+    }
+
+    fn is_shadowed(&self, point: &Tuple) -> bool {
+        let to_light = self.lights[0].position - *point;
+        let ray = Ray::new(*point, to_light.normalize());
+        self.intersect(&ray)
+            .hit()
+            .is_some_and(|hit| hit.t < to_light.magnitude())
     }
 }
 
@@ -191,5 +199,33 @@ mod tests {
         let r = Ray::new(point(0.0, 0.0, 0.75), vector(0.0, 0.0, -1.0));
         let c = w.color_at(&r);
         assert_eq!(c, inner_material.color);
+    }
+
+    #[test]
+    fn test_no_shadow_when_nothing_collinear_with_point_and_light() {
+        let w = World::default();
+        let p = point(0.0, 10.0, 0.0);
+        assert_eq!(w.is_shadowed(&p), false);
+    }
+
+    #[test]
+    fn test_shadow_when_an_object_is_between_the_point_and_the_light() {
+        let w = World::default();
+        let p = point(10.0, -10.0, 10.0);
+        assert_eq!(w.is_shadowed(&p), true);
+    }
+
+    #[test]
+    fn test_no_shadow_when_an_object_is_behind_the_light() {
+        let w = World::default();
+        let p = point(-20.0, 20.0, -20.0);
+        assert_eq!(w.is_shadowed(&p), false);
+    }
+
+    #[test]
+    fn test_no_shadow_when_an_object_is_behind_the_point() {
+        let w = World::default();
+        let p = point(-2.0, 2.0, -2.0);
+        assert_eq!(w.is_shadowed(&p), false);
     }
 }
