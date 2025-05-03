@@ -19,12 +19,14 @@ impl Intersection<'_> {
         if inside {
             normalv = -normalv;
         }
+        let over_point = point + normalv * 1e-9;
         Computations {
             t: self.t,
             object: self.object,
             point,
             eyev,
             normalv,
+            over_point,
             inside,
         }
     }
@@ -36,6 +38,7 @@ pub struct Computations<'a> {
     pub point: crate::tuple::Tuple,
     pub eyev: crate::tuple::Tuple,
     pub normalv: crate::tuple::Tuple,
+    pub over_point: crate::tuple::Tuple,
     pub inside: bool,
 }
 
@@ -67,6 +70,7 @@ impl<'a> Intersections<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::matrix::Matrix;
     use crate::ray::Ray;
     use crate::tuple::{point, vector};
 
@@ -160,5 +164,15 @@ mod tests {
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
         assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
         assert_eq!(comps.inside, true);
+    }
+
+    #[test]
+    fn test_hit_should_offset_the_point() {
+        let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
+        let shape = Sphere::new().set_transform(&Matrix::translation(0.0, 0.0, 1.0));
+        let i = Intersection::new(5.0, &shape);
+        let comps = i.prepare_computations(&r);
+        assert!(comps.over_point.z < -1e-9 / 2.0);
+        assert!(comps.point.z > comps.over_point.z);
     }
 }

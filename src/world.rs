@@ -64,7 +64,7 @@ impl World {
                     &comps.point,
                     &comps.eyev,
                     &comps.normalv,
-                    self.is_shadowed(&comps.point),
+                    self.is_shadowed(&comps.over_point),
                 );
         }
         color
