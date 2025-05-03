@@ -6,11 +6,11 @@ use crate::tuple::Tuple;
 
 #[derive(Debug, Clone, PartialEq, AbsDiffEq)]
 pub struct Material {
-    pub color: Color,
-    pub ambient: f64,
-    pub diffuse: f64,
-    pub specular: f64,
-    pub shininess: f64,
+    color: Color,
+    ambient: f64,
+    diffuse: f64,
+    specular: f64,
+    shininess: f64,
 }
 
 impl Material {
@@ -22,6 +22,31 @@ impl Material {
             specular: 0.9,
             shininess: 200.0,
         }
+    }
+
+    pub fn with_color(mut self, color: Color) -> Self {
+        self.color = color;
+        self
+    }
+
+    pub fn with_ambient(mut self, ambient: f64) -> Self {
+        self.ambient = ambient;
+        self
+    }
+
+    pub fn with_diffuse(mut self, diffuse: f64) -> Self {
+        self.diffuse = diffuse;
+        self
+    }
+
+    pub fn with_specular(mut self, specular: f64) -> Self {
+        self.specular = specular;
+        self
+    }
+
+    pub fn with_shininess(mut self, shininess: f64) -> Self {
+        self.shininess = shininess;
+        self
     }
 
     pub fn lighting(

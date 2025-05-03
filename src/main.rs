@@ -105,8 +105,7 @@ fn draw_clock() {
 fn render_sphere() {
     let size = 400;
     let mut c = canvas(size, size);
-    let mut m = Material::new();
-    m.color = Color::new(1.0, 0.2, 1.0);
+    let m = Material::new().with_color(Color::new(1.0, 0.2, 1.0));
     let s = Sphere::new()
         .set_material(&m)
         .set_transform(&Matrix::translation(0.0, 0.0, 2.0));
@@ -140,9 +139,9 @@ fn render_sphere() {
 }
 
 fn render_chapter7_scene() {
-    let mut m = Material::new();
-    m.color = Color::new(1.0, 0.9, 0.9);
-    m.specular = 0.0;
+    let m = Material::new()
+        .with_color(Color::new(1.0, 0.9, 0.9))
+        .with_specular(0.0);
     let floor = Sphere::new()
         .set_material(&m)
         .set_transform(&Matrix::scaling(10.0, 0.01, 10.0));
@@ -161,26 +160,26 @@ fn render_chapter7_scene() {
             * Matrix::scaling(10.0, 0.01, 10.0)),
     );
 
-    let mut m = Material::new();
-    m.color = Color::new(0.1, 1.0, 0.5);
-    m.diffuse = 0.7;
-    m.specular = 0.3;
+    let m = Material::new()
+        .with_color(Color::new(0.1, 1.0, 0.5))
+        .with_diffuse(0.7)
+        .with_specular(0.3);
     let middle = Sphere::new()
         .set_material(&m)
         .set_transform(&Matrix::translation(-0.5, 1.0, 0.5));
 
-    let mut m = Material::new();
-    m.color = Color::new(0.5, 1.0, 0.1);
-    m.diffuse = 0.7;
-    m.specular = 0.3;
+    let m = Material::new()
+        .with_color(Color::new(0.5, 1.0, 0.1))
+        .with_diffuse(0.7)
+        .with_specular(0.3);
     let right = Sphere::new()
         .set_material(&m)
         .set_transform(&(Matrix::translation(1.5, 0.5, -0.5) * Matrix::scaling(0.5, 0.5, 0.5)));
 
-    let mut m = Material::new();
-    m.color = Color::new(1.0, 0.8, 0.1);
-    m.diffuse = 0.7;
-    m.specular = 0.3;
+    let m = Material::new()
+        .with_color(Color::new(1.0, 0.8, 0.1))
+        .with_diffuse(0.7)
+        .with_specular(0.3);
     let left = Sphere::new().set_material(&m).set_transform(
         &(Matrix::translation(-1.5, 0.33, -0.75) * Matrix::scaling(0.33, 0.33, 0.33)),
     );

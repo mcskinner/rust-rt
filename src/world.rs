@@ -23,10 +23,10 @@ impl World {
     pub fn default() -> World {
         let light = Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-        let mut m = Material::new();
-        m.color = Color::new(0.8, 1.0, 0.6);
-        m.diffuse = 0.7;
-        m.specular = 0.2;
+        let m = Material::new()
+            .with_color(Color::new(0.8, 1.0, 0.6))
+            .with_diffuse(0.7)
+            .with_specular(0.2);
         let s1 = Sphere::new().set_material(&m);
         let s2 = Sphere::new().set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
 
@@ -108,10 +108,10 @@ mod tests {
         let w = World::default();
         let light = Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-        let mut m = Material::new();
-        m.color = Color::new(0.8, 1.0, 0.6);
-        m.diffuse = 0.7;
-        m.specular = 0.2;
+        let m = Material::new()
+            .with_color(Color::new(0.8, 1.0, 0.6))
+            .with_diffuse(0.7)
+            .with_specular(0.2);
         let s1 = Sphere::new().set_material(&m);
 
         let s2 = Sphere::new().set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
@@ -180,20 +180,23 @@ mod tests {
         let mut w = World::default();
 
         let mut outer = w.objects[0].clone();
-        let mut outer_material = outer.material.clone();
-        outer_material.ambient = 1.0;
+        let outer_material = outer.material.clone().with_ambient(1.0);
         outer = outer.set_material(&outer_material);
 
         let mut inner = w.objects[1].clone();
-        let mut inner_material = inner.material.clone();
-        inner_material.ambient = 1.0;
+        let inner_color = Color::new(1.0, 0.6, 0.2);
+        let inner_material = inner
+            .material
+            .clone()
+            .with_ambient(1.0)
+            .with_color(inner_color);
         inner = inner.set_material(&inner_material);
 
         w.objects = vec![outer, inner];
 
         let r = Ray::new(point(0.0, 0.0, 0.75), vector(0.0, 0.0, -1.0));
         let c = w.color_at(&r);
-        assert_eq!(c, inner_material.color);
+        assert_eq!(c, inner_color);
     }
 
     #[test]
