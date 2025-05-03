@@ -62,10 +62,13 @@ impl World {
         let mut color = Color::new(0.0, 0.0, 0.0);
         for light in &self.lights {
             color = color
-                + comps
-                    .object
-                    .material
-                    .lighting(light, &comps.point, &comps.eyev, &comps.normalv);
+                + comps.object.material.lighting(
+                    light,
+                    &comps.point,
+                    &comps.eyev,
+                    &comps.normalv,
+                    false,
+                );
         }
         color
     }
