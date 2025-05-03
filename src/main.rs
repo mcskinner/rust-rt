@@ -105,11 +105,11 @@ fn draw_clock() {
 fn render_sphere() {
     let size = 400;
     let mut c = canvas(size, size);
-    let mut s = Sphere::new();
     let mut m = Material::new();
     m.color = Color::new(1.0, 0.2, 1.0);
-    s.set_material(&m);
-    s.set_transform(&Matrix::translation(0.0, 0.0, 2.0));
+    let s = Sphere::new()
+        .set_material(&m)
+        .set_transform(&Matrix::translation(0.0, 0.0, 2.0));
 
     let camera = point(0.0, 0.0, -5.0);
     let light = light::Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
@@ -140,54 +140,48 @@ fn render_sphere() {
 }
 
 fn render_chapter7_scene() {
-    let mut floor = Sphere::new();
     let mut m = Material::new();
     m.color = Color::new(1.0, 0.9, 0.9);
     m.specular = 0.0;
-    floor.set_material(&m);
-    floor.set_transform(&Matrix::scaling(10.0, 0.01, 10.0));
+    let floor = Sphere::new()
+        .set_material(&m)
+        .set_transform(&Matrix::scaling(10.0, 0.01, 10.0));
 
-    let mut left_wall = Sphere::new();
-    left_wall.set_material(&m);
-    left_wall.set_transform(
+    let left_wall = Sphere::new().set_material(&m).set_transform(
         &(Matrix::translation(0.0, 0.0, 5.0)
             * Matrix::rotation_y(-FRAC_PI_4)
             * Matrix::rotation_x(FRAC_PI_2)
             * Matrix::scaling(10.0, 0.01, 10.0)),
     );
 
-    let mut right_wall = Sphere::new();
-    right_wall.set_material(&m);
-    right_wall.set_transform(
+    let right_wall = Sphere::new().set_material(&m).set_transform(
         &(Matrix::translation(0.0, 0.0, 5.0)
             * Matrix::rotation_y(FRAC_PI_4)
             * Matrix::rotation_x(FRAC_PI_2)
             * Matrix::scaling(10.0, 0.01, 10.0)),
     );
 
-    let mut middle = Sphere::new();
     let mut m = Material::new();
     m.color = Color::new(0.1, 1.0, 0.5);
     m.diffuse = 0.7;
     m.specular = 0.3;
-    middle.set_material(&m);
-    middle.set_transform(&Matrix::translation(-0.5, 1.0, 0.5));
+    let middle = Sphere::new()
+        .set_material(&m)
+        .set_transform(&Matrix::translation(-0.5, 1.0, 0.5));
 
-    let mut right = Sphere::new();
     let mut m = Material::new();
     m.color = Color::new(0.5, 1.0, 0.1);
     m.diffuse = 0.7;
     m.specular = 0.3;
-    right.set_material(&m);
-    right.set_transform(&(Matrix::translation(1.5, 0.5, -0.5) * Matrix::scaling(0.5, 0.5, 0.5)));
+    let right = Sphere::new()
+        .set_material(&m)
+        .set_transform(&(Matrix::translation(1.5, 0.5, -0.5) * Matrix::scaling(0.5, 0.5, 0.5)));
 
-    let mut left = Sphere::new();
     let mut m = Material::new();
     m.color = Color::new(1.0, 0.8, 0.1);
     m.diffuse = 0.7;
     m.specular = 0.3;
-    left.set_material(&m);
-    left.set_transform(
+    let left = Sphere::new().set_material(&m).set_transform(
         &(Matrix::translation(-1.5, 0.33, -0.75) * Matrix::scaling(0.33, 0.33, 0.33)),
     );
 

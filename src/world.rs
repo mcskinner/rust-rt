@@ -23,15 +23,12 @@ impl World {
     pub fn default() -> World {
         let light = Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-        let mut s1 = Sphere::new();
         let mut m = Material::new();
         m.color = Color::new(0.8, 1.0, 0.6);
         m.diffuse = 0.7;
         m.specular = 0.2;
-        s1.set_material(&m);
-
-        let mut s2 = Sphere::new();
-        s2.set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
+        let s1 = Sphere::new().set_material(&m);
+        let s2 = Sphere::new().set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
 
         World {
             lights: vec![light],
@@ -67,7 +64,7 @@ impl World {
                     &comps.point,
                     &comps.eyev,
                     &comps.normalv,
-                    false,
+                    self.is_shadowed(&comps.point),
                 );
         }
         color
@@ -111,15 +108,13 @@ mod tests {
         let w = World::default();
         let light = Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-        let mut s1 = Sphere::new();
         let mut m = Material::new();
         m.color = Color::new(0.8, 1.0, 0.6);
         m.diffuse = 0.7;
         m.specular = 0.2;
-        s1.set_material(&m);
+        let s1 = Sphere::new().set_material(&m);
 
-        let mut s2 = Sphere::new();
-        s2.set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
+        let s2 = Sphere::new().set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
 
         assert_eq!(w.lights.len(), 1);
         assert_eq!(w.lights[0], light);
@@ -187,12 +182,12 @@ mod tests {
         let mut outer = w.objects[0].clone();
         let mut outer_material = outer.material.clone();
         outer_material.ambient = 1.0;
-        outer.set_material(&outer_material);
+        outer = outer.set_material(&outer_material);
 
         let mut inner = w.objects[1].clone();
         let mut inner_material = inner.material.clone();
         inner_material.ambient = 1.0;
-        inner.set_material(&inner_material);
+        inner = inner.set_material(&inner_material);
 
         w.objects = vec![outer, inner];
 
@@ -227,5 +222,23 @@ mod tests {
         let w = World::default();
         let p = point(-2.0, 2.0, -2.0);
         assert_eq!(w.is_shadowed(&p), false);
+    }
+
+    #[test]
+    fn test_shade_hit_is_given_an_intersection_in_shadow() {
+        let s1 = Sphere::new();
+        let s2 = Sphere::new().set_transform(&Matrix::translation(0.0, 0.0, 10.0));
+        let w = World::new()
+            .add_light(Light::new(
+                point(0.0, 0.0, -10.0),
+                Color::new(1.0, 1.0, 1.0),
+            ))
+            .add_object(s1)
+            .add_object(s2);
+        let r = Ray::new(point(0.0, 0.0, 5.0), vector(0.0, 0.0, 1.0));
+        let i = Intersection::new(4.0, &w.objects[1]);
+        let comps = i.prepare_computations(&r);
+        let c = w.shade_hit(&comps);
+        assert_abs_diff_eq!(c, Color::new(0.1, 0.1, 0.1));
     }
 }

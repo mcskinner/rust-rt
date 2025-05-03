@@ -22,13 +22,15 @@ impl Sphere {
         }
     }
 
-    pub fn set_transform(&mut self, m: &Matrix) {
+    pub fn set_transform(mut self, m: &Matrix) -> Self {
         self.transform = m.clone();
         self.inverse_transform = m.inverse();
+        self
     }
 
-    pub fn set_material(&mut self, m: &Material) {
+    pub fn set_material(mut self, m: &Material) -> Self {
         self.material = m.clone();
+        self
     }
 
     pub fn intersect(&self, ray: &Ray) -> Intersections {
@@ -142,17 +144,15 @@ mod tests {
 
     #[test]
     fn test_changing_a_spheres_transformation() {
-        let mut s = Sphere::new();
         let m = Matrix::translation(2.0, 3.0, 4.0);
-        s.set_transform(&m);
+        let s = Sphere::new().set_transform(&m);
         assert_eq!(s.transform, m);
     }
 
     #[test]
     fn test_intersecting_a_scaled_sphere_with_a_ray() {
         let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
-        let mut s = Sphere::new();
-        s.set_transform(&Matrix::scaling(2.0, 2.0, 2.0));
+        let s = Sphere::new().set_transform(&Matrix::scaling(2.0, 2.0, 2.0));
         let xs = s.intersect(&r);
         assert_eq!(xs.xs.len(), 2);
         assert_eq!(xs.xs[0].t, 3.0);
@@ -162,8 +162,7 @@ mod tests {
     #[test]
     fn test_intersecting_a_translated_sphere_with_a_ray() {
         let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
-        let mut s = Sphere::new();
-        s.set_transform(&Matrix::translation(5.0, 0.0, 0.0));
+        let s = Sphere::new().set_transform(&Matrix::translation(5.0, 0.0, 0.0));
         let xs = s.intersect(&r);
         assert_eq!(xs.xs.len(), 0);
     }
@@ -207,8 +206,7 @@ mod tests {
 
     #[test]
     fn test_computing_the_normal_on_a_translated_sphere() {
-        let mut s = Sphere::new();
-        s.set_transform(&Matrix::translation(0.0, 1.0, 0.0));
+        let s = Sphere::new().set_transform(&Matrix::translation(0.0, 1.0, 0.0));
         let n = s.normal_at(point(
             0.0,
             1.0 + std::f64::consts::FRAC_1_SQRT_2,
@@ -226,8 +224,7 @@ mod tests {
 
     #[test]
     fn test_computing_the_normal_on_a_transformed_sphere() {
-        let mut s = Sphere::new();
-        s.set_transform(
+        let s = Sphere::new().set_transform(
             &(Matrix::scaling(1.0, 0.5, 1.0) * Matrix::rotation_z(std::f64::consts::PI / 5.0)),
         );
         let n = s.normal_at(point(
@@ -246,10 +243,9 @@ mod tests {
 
     #[test]
     fn test_sphere_may_be_assigned_a_material() {
-        let mut s = Sphere::new();
         let mut m = Material::new();
         m.ambient = 1.0;
-        s.set_material(&m);
+        let s = Sphere::new().set_material(&m);
         assert_eq!(s.material, m);
     }
 }
