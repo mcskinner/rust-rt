@@ -24,6 +24,11 @@ impl Material {
         }
     }
 
+    pub fn with_rgb(mut self, r: f64, g: f64, b: f64) -> Self {
+        self.color = Color::new(r, g, b);
+        self
+    }
+
     pub fn with_color(mut self, color: Color) -> Self {
         self.color = color;
         self

@@ -24,7 +24,7 @@ impl World {
         let light = Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
         let m = Material::new()
-            .with_color(Color::new(0.8, 1.0, 0.6))
+            .with_rgb(0.8, 1.0, 0.6)
             .with_diffuse(0.7)
             .with_specular(0.2);
         let s1 = Sphere::new().set_material(&m);
@@ -109,7 +109,7 @@ mod tests {
         let light = Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
         let m = Material::new()
-            .with_color(Color::new(0.8, 1.0, 0.6))
+            .with_rgb(0.8, 1.0, 0.6)
             .with_diffuse(0.7)
             .with_specular(0.2);
         let s1 = Sphere::new().set_material(&m);
