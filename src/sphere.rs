@@ -35,7 +35,7 @@ impl Sphere {
 
     pub fn intersect(&self, ray: &Ray) -> Intersections {
         let ray_t = ray.transform(&self.inverse_transform);
-        let sphere_to_ray = ray_t.origin - point(0.0, 0.0, 0.0);
+        let sphere_to_ray = ray_t.origin - Tuple::ORIGIN;
 
         let a = ray_t.direction.dot(&ray_t.direction);
         let b = 2.0 * ray_t.direction.dot(&sphere_to_ray);
@@ -60,7 +60,7 @@ impl Sphere {
 
     pub fn normal_at(&self, world_point: &Tuple) -> Tuple {
         let local_point = &self.inverse_transform * world_point;
-        let local_normal = local_point - point(0.0, 0.0, 0.0);
+        let local_normal = local_point - Tuple::ORIGIN;
         let mut world_normal = self.inverse_transform.transpose() * local_normal;
         world_normal.w = 0.0;
         world_normal.normalize()
@@ -108,7 +108,7 @@ mod tests {
 
     #[test]
     fn test_ray_originates_inside_a_sphere() {
-        let r = Ray::new(point(0.0, 0.0, 0.0), vector(0.0, 0.0, 1.0));
+        let r = Ray::new(Tuple::ORIGIN, vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
         let xs = s.intersect(&r);
         assert_eq!(xs.xs.len(), 2);

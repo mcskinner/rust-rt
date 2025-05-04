@@ -104,7 +104,7 @@ mod tests {
     #[test]
     fn test_lighting_with_eye_between_light_and_surface() {
         let m = Material::new();
-        let position = point(0.0, 0.0, 0.0);
+        let position = Tuple::ORIGIN;
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::new(point(0.0, 0.0, -10.0), Color::WHITE);
@@ -115,7 +115,7 @@ mod tests {
     #[test]
     fn test_lighting_with_eye_between_light_and_surface_eye_offset_45deg() {
         let m = Material::new();
-        let position = point(0.0, 0.0, 0.0);
+        let position = Tuple::ORIGIN;
         let eyev = vector(
             0.0,
             std::f64::consts::FRAC_1_SQRT_2,
@@ -130,7 +130,7 @@ mod tests {
     #[test]
     fn test_lighting_with_eye_opposite_surface_light_offset_45deg() {
         let m = Material::new();
-        let position = point(0.0, 0.0, 0.0);
+        let position = Tuple::ORIGIN;
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::new(point(0.0, 10.0, -10.0), Color::WHITE);
@@ -145,7 +145,7 @@ mod tests {
     #[test]
     fn test_lighting_with_eye_in_the_path_of_reflection_vector() {
         let m = Material::new();
-        let position = point(0.0, 0.0, 0.0);
+        let position = Tuple::ORIGIN;
         let eyev = vector(
             0.0,
             -std::f64::consts::FRAC_1_SQRT_2,
@@ -164,7 +164,7 @@ mod tests {
     #[test]
     fn test_lighting_with_the_light_behind_the_surface() {
         let m = Material::new();
-        let position = point(0.0, 0.0, 0.0);
+        let position = Tuple::ORIGIN;
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::new(point(0.0, 0.0, 10.0), Color::WHITE);
@@ -175,7 +175,7 @@ mod tests {
     #[test]
     fn test_lighting_with_the_surface_in_shadow() {
         let m = Material::new();
-        let position = point(0.0, 0.0, 0.0);
+        let position = Tuple::ORIGIN;
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::new(point(0.0, 0.0, -10.0), Color::WHITE);

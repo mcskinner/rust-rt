@@ -72,7 +72,7 @@ mod tests {
     use super::*;
     use crate::matrix::Matrix;
     use crate::ray::Ray;
-    use crate::tuple::{point, vector};
+    use crate::tuple::{Tuple, point, vector};
 
     #[test]
     fn test_intersection() {
@@ -156,7 +156,7 @@ mod tests {
 
     #[test]
     fn test_hit_from_the_inside() {
-        let r = Ray::new(point(0.0, 0.0, 0.0), vector(0.0, 0.0, 1.0));
+        let r = Ray::new(Tuple::ORIGIN, vector(0.0, 0.0, 1.0));
         let shape = Sphere::new();
         let i = Intersection::new(1.0, &shape);
         let comps = i.prepare_computations(&r);

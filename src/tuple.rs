@@ -17,6 +17,13 @@ pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
 }
 
 impl Tuple {
+    pub const ORIGIN: Tuple = Tuple {
+        x: 0.0,
+        y: 0.0,
+        z: 0.0,
+        w: 1.0,
+    };
+
     pub fn new(x: f64, y: f64, z: f64, w: f64) -> Tuple {
         Tuple { x, y, z, w }
     }

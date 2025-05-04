@@ -151,7 +151,7 @@ mod tests {
     fn test_shading_an_intersection_from_inside() {
         let mut w = World::default();
         w.lights[0] = Light::new(point(0.0, 0.25, 0.0), Color::WHITE);
-        let r = Ray::new(point(0.0, 0.0, 0.0), vector(0.0, 0.0, 1.0));
+        let r = Ray::new(Tuple::ORIGIN, vector(0.0, 0.0, 1.0));
         let shape = &w.objects[1];
         let i = Intersection::new(0.5, shape);
         let comps = i.prepare_computations(&r);

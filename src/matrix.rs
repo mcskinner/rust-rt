@@ -781,7 +781,7 @@ mod tests {
 
     #[test]
     fn test_view_transform_for_the_default_orientation() {
-        let from = point(0.0, 0.0, 0.0);
+        let from = Tuple::ORIGIN;
         let to = point(0.0, 0.0, -1.0);
         let up = vector(0.0, 1.0, 0.0);
         let t = Matrix::view_transform(from, to, up);
@@ -790,7 +790,7 @@ mod tests {
 
     #[test]
     fn test_view_transform_looking_in_positive_z_direction() {
-        let from = point(0.0, 0.0, 0.0);
+        let from = Tuple::ORIGIN;
         let to = point(0.0, 0.0, 1.0);
         let up = vector(0.0, 1.0, 0.0);
         let t = Matrix::view_transform(from, to, up);
@@ -800,7 +800,7 @@ mod tests {
     #[test]
     fn test_view_transform_moves_the_world() {
         let from = point(0.0, 0.0, 8.0);
-        let to = point(0.0, 0.0, 0.0);
+        let to = Tuple::ORIGIN;
         let up = vector(0.0, 1.0, 0.0);
         let t = Matrix::view_transform(from, to, up);
         assert_eq!(t, Matrix::translation(0.0, 0.0, -8.0));

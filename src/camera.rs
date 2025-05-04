@@ -1,7 +1,7 @@
 use crate::canvas::Canvas;
 use crate::matrix::Matrix;
 use crate::ray::Ray;
-use crate::tuple::point;
+use crate::tuple::{Tuple, point};
 use crate::world::World;
 
 pub struct Camera {
@@ -47,7 +47,7 @@ impl Camera {
         let y_offset = (py as f64 + 0.5) * self.pixel_size;
         let world_x = self.half_width - x_offset;
         let world_y = self.half_height - y_offset;
-        let origin = &self.inverse_transform * point(0.0, 0.0, 0.0);
+        let origin = &self.inverse_transform * Tuple::ORIGIN;
         let pixel = &self.inverse_transform * point(world_x, world_y, -1.0);
         let direction = (pixel - origin).normalize();
         Ray::new(origin, direction)
@@ -98,7 +98,7 @@ mod tests {
     fn test_a_ray_through_the_center_of_the_canvas() {
         let c = Camera::new(201, 101, FRAC_PI_2);
         let r = c.ray_for_pixel(100, 50);
-        assert_abs_diff_eq!(r.origin, point(0.0, 0.0, 0.0));
+        assert_abs_diff_eq!(r.origin, Tuple::ORIGIN);
         assert_abs_diff_eq!(r.direction, vector(0.0, 0.0, -1.0));
     }
 
@@ -106,7 +106,7 @@ mod tests {
     fn test_a_ray_through_a_corner_of_the_canvas() {
         let c = Camera::new(201, 101, FRAC_PI_2);
         let r = c.ray_for_pixel(0, 0);
-        assert_abs_diff_eq!(r.origin, point(0.0, 0.0, 0.0));
+        assert_abs_diff_eq!(r.origin, Tuple::ORIGIN);
         assert_abs_diff_eq!(
             r.direction,
             vector(0.66519, 0.33259, -0.66851),
