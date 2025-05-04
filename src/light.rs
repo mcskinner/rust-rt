@@ -24,7 +24,7 @@ mod tests {
     #[test]
     fn test_creating_a_light() {
         let position = point(0.0, 10.0, -10.0);
-        let intensity = Color::new(1.0, 1.0, 1.0);
+        let intensity = Color::WHITE;
         let light = Light::new(position, intensity);
         assert_eq!(light.position, position);
         assert_eq!(light.intensity, intensity);

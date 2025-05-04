@@ -21,7 +21,7 @@ impl World {
     }
 
     pub fn default() -> World {
-        let light = Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
+        let light = Light::new(point(-10.0, 10.0, -10.0), Color::WHITE);
 
         let m = Material::new()
             .with_rgb(0.8, 1.0, 0.6)
@@ -36,8 +36,8 @@ impl World {
         }
     }
 
-    pub fn add_object(mut self, floor: Sphere) -> Self {
-        self.objects.push(floor);
+    pub fn add_object(mut self, object: Sphere) -> Self {
+        self.objects.push(object);
         self
     }
 
@@ -56,7 +56,7 @@ impl World {
     }
 
     fn shade_hit(&self, comps: &Computations) -> Color {
-        let mut color = Color::new(0.0, 0.0, 0.0);
+        let mut color = Color::BLACK;
         for light in &self.lights {
             color = color
                 + comps.object.material.lighting(
@@ -76,7 +76,7 @@ impl World {
             let comps = hit.prepare_computations(r);
             self.shade_hit(&comps)
         } else {
-            Color::new(0.0, 0.0, 0.0)
+            Color::BLACK
         }
     }
 
@@ -106,7 +106,7 @@ mod tests {
     #[test]
     fn test_the_default_world() {
         let w = World::default();
-        let light = Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
+        let light = Light::new(point(-10.0, 10.0, -10.0), Color::WHITE);
 
         let m = Material::new()
             .with_rgb(0.8, 1.0, 0.6)
@@ -150,7 +150,7 @@ mod tests {
     #[test]
     fn test_shading_an_intersection_from_inside() {
         let mut w = World::default();
-        w.lights[0] = Light::new(point(0.0, 0.25, 0.0), Color::new(1.0, 1.0, 1.0));
+        w.lights[0] = Light::new(point(0.0, 0.25, 0.0), Color::WHITE);
         let r = Ray::new(point(0.0, 0.0, 0.0), vector(0.0, 0.0, 1.0));
         let shape = &w.objects[1];
         let i = Intersection::new(0.5, shape);
@@ -164,7 +164,7 @@ mod tests {
         let w = World::default();
         let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 1.0, 0.0));
         let c = w.color_at(&r);
-        assert_eq!(c, Color::new(0.0, 0.0, 0.0));
+        assert_eq!(c, Color::BLACK);
     }
 
     #[test]
@@ -232,10 +232,7 @@ mod tests {
         let s1 = Sphere::new();
         let s2 = Sphere::new().set_transform(&Matrix::translation(0.0, 0.0, 10.0));
         let w = World::new()
-            .add_light(Light::new(
-                point(0.0, 0.0, -10.0),
-                Color::new(1.0, 1.0, 1.0),
-            ))
+            .add_light(Light::new(point(0.0, 0.0, -10.0), Color::WHITE))
             .add_object(s1)
             .add_object(s2);
         let r = Ray::new(point(0.0, 0.0, 5.0), vector(0.0, 0.0, 1.0));

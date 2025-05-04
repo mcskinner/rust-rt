@@ -10,6 +10,16 @@ pub struct Color {
 }
 
 impl Color {
+    pub const BLACK: Color = Color {
+        red: 0.0,
+        green: 0.0,
+        blue: 0.0,
+    };
+    pub const WHITE: Color = Color {
+        red: 1.0,
+        green: 1.0,
+        blue: 1.0,
+    };
     pub fn new(red: f64, green: f64, blue: f64) -> Color {
         Color { red, green, blue }
     }

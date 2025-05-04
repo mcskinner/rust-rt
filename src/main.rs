@@ -111,7 +111,7 @@ fn render_sphere() {
         .set_transform(&Matrix::translation(0.0, 0.0, 2.0));
 
     let camera = point(0.0, 0.0, -5.0);
-    let light = light::Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
+    let light = light::Light::new(point(-10.0, 10.0, -10.0), Color::WHITE);
 
     for y in 0..size {
         for x in 0..size {
@@ -182,7 +182,7 @@ fn render_chapter7_scene() {
         &(Matrix::translation(-1.5, 0.33, -0.75) * Matrix::scaling(0.33, 0.33, 0.33)),
     );
 
-    let light = Light::new(point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
+    let light = Light::new(point(-10.0, 10.0, -10.0), Color::WHITE);
 
     let mut camera = Camera::new(400, 200, FRAC_PI_3);
     camera.set_transform(&Matrix::view_transform(

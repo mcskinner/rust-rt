@@ -16,7 +16,7 @@ pub struct Material {
 impl Material {
     pub fn new() -> Material {
         Material {
-            color: Color::new(1.0, 1.0, 1.0),
+            color: Color::WHITE,
             ambient: 0.1,
             diffuse: 0.9,
             specular: 0.9,
@@ -94,7 +94,7 @@ mod tests {
     #[test]
     fn test_the_default_material() {
         let m = Material::new();
-        assert_eq!(m.color, Color::new(1.0, 1.0, 1.0));
+        assert_eq!(m.color, Color::WHITE);
         assert_eq!(m.ambient, 0.1);
         assert_eq!(m.diffuse, 0.9);
         assert_eq!(m.specular, 0.9);
@@ -107,7 +107,7 @@ mod tests {
         let position = point(0.0, 0.0, 0.0);
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
-        let light = Light::new(point(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
+        let light = Light::new(point(0.0, 0.0, -10.0), Color::WHITE);
         let result = m.lighting(&light, &position, &eyev, &normalv, false);
         assert_eq!(result, Color::new(1.9, 1.9, 1.9));
     }
@@ -122,9 +122,9 @@ mod tests {
             -std::f64::consts::FRAC_1_SQRT_2,
         );
         let normalv = vector(0.0, 0.0, -1.0);
-        let light = Light::new(point(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
+        let light = Light::new(point(0.0, 0.0, -10.0), Color::WHITE);
         let result = m.lighting(&light, &position, &eyev, &normalv, false);
-        assert_eq!(result, Color::new(1.0, 1.0, 1.0));
+        assert_eq!(result, Color::WHITE);
     }
 
     #[test]
@@ -133,7 +133,7 @@ mod tests {
         let position = point(0.0, 0.0, 0.0);
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
-        let light = Light::new(point(0.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
+        let light = Light::new(point(0.0, 10.0, -10.0), Color::WHITE);
         let result = m.lighting(&light, &position, &eyev, &normalv, false);
         assert_abs_diff_eq!(
             result,
@@ -152,7 +152,7 @@ mod tests {
             -std::f64::consts::FRAC_1_SQRT_2,
         );
         let normalv = vector(0.0, 0.0, -1.0);
-        let light = Light::new(point(0.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
+        let light = Light::new(point(0.0, 10.0, -10.0), Color::WHITE);
         let result = m.lighting(&light, &position, &eyev, &normalv, false);
         assert_abs_diff_eq!(
             result,
@@ -167,7 +167,7 @@ mod tests {
         let position = point(0.0, 0.0, 0.0);
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
-        let light = Light::new(point(0.0, 0.0, 10.0), Color::new(1.0, 1.0, 1.0));
+        let light = Light::new(point(0.0, 0.0, 10.0), Color::WHITE);
         let result = m.lighting(&light, &position, &eyev, &normalv, false);
         assert_eq!(result, Color::new(0.1, 0.1, 0.1));
     }
@@ -178,7 +178,7 @@ mod tests {
         let position = point(0.0, 0.0, 0.0);
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
-        let light = Light::new(point(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
+        let light = Light::new(point(0.0, 0.0, -10.0), Color::WHITE);
         let result = m.lighting(&light, &position, &eyev, &normalv, true);
         assert_eq!(result, Color::new(0.1, 0.1, 0.1));
     }

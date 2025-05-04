@@ -12,7 +12,7 @@ pub fn canvas(width: usize, height: usize) -> Canvas {
 
 impl Canvas {
     pub fn new(width: usize, height: usize) -> Canvas {
-        let pixels = vec![vec![Color::new(0.0, 0.0, 0.0); width]; height];
+        let pixels = vec![vec![Color::BLACK; width]; height];
         Canvas {
             width,
             height,
@@ -72,7 +72,7 @@ mod tests {
         assert_eq!(c.height, 20);
         for x in 0..10 {
             for y in 0..20 {
-                assert_eq!(c.pixels[y][x], Color::new(0.0, 0.0, 0.0));
+                assert_eq!(c.pixels[y][x], Color::BLACK);
             }
         }
     }
