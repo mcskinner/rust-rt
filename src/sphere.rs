@@ -4,7 +4,7 @@ use crate::intersection::{Intersection, Intersections};
 use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::ray::Ray;
-use crate::tuple::{Tuple, point};
+use crate::tuple::Tuple;
 
 #[derive(Debug, Clone, AbsDiffEq)]
 pub struct Sphere {
@@ -76,7 +76,7 @@ impl PartialEq for Sphere {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::tuple::vector;
+    use crate::tuple::{point, vector};
     use approx::assert_abs_diff_eq;
 
     #[test]

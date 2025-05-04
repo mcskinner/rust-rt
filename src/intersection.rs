@@ -1,4 +1,5 @@
 use crate::sphere::Sphere;
+use crate::tuple::Tuple;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Intersection<'a> {
@@ -35,10 +36,10 @@ impl Intersection<'_> {
 pub struct Computations<'a> {
     pub t: f64,
     pub object: &'a Sphere,
-    pub point: crate::tuple::Tuple,
-    pub eyev: crate::tuple::Tuple,
-    pub normalv: crate::tuple::Tuple,
-    pub over_point: crate::tuple::Tuple,
+    pub point: Tuple,
+    pub eyev: Tuple,
+    pub normalv: Tuple,
+    pub over_point: Tuple,
     pub inside: bool,
 }
 
@@ -72,7 +73,7 @@ mod tests {
     use super::*;
     use crate::matrix::Matrix;
     use crate::ray::Ray;
-    use crate::tuple::{Tuple, point, vector};
+    use crate::tuple::{point, vector};
 
     #[test]
     fn test_intersection() {
