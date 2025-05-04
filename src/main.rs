@@ -208,5 +208,12 @@ fn render_chapter7_scene() {
 }
 
 fn main() {
-    render_chapter7_scene();
+    let demo = "chapter7";
+    match demo {
+        "projectile" => simulate_projectile(),
+        "clock" => draw_clock(),
+        "sphere" => render_sphere(),
+        "chapter7" => render_chapter7_scene(),
+        _ => (),
+    }
 }
