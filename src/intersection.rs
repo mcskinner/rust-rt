@@ -14,7 +14,7 @@ impl Intersection<'_> {
     pub fn prepare_computations(&self, r: &crate::ray::Ray) -> Computations {
         let eyev = -r.direction;
         let point = r.position(self.t);
-        let mut normalv = self.object.normal_at(point);
+        let mut normalv = self.object.normal_at(&point);
         let inside = eyev.dot(&normalv) < 0.0;
         if inside {
             normalv = -normalv;

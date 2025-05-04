@@ -125,7 +125,7 @@ fn render_sphere() {
             let ray = ray::Ray::new(camera, direction);
             if let Some(hit) = s.intersect(&ray).hit() {
                 let position = ray.position(hit.t);
-                let normalv = s.normal_at(position);
+                let normalv = s.normal_at(&position);
                 let eyev = (camera - position).normalize();
                 let color = m.lighting(&light, &position, &eyev, &normalv, false);
                 c.write_pixel(x, y, color);
