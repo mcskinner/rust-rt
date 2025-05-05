@@ -117,3 +117,23 @@ This chapter was straightforward, but I'm noticing more and more patterns I used
 - Importing functions inside the test submodule, which Copilot just did. This makes a lot of sense, probably a bunch I can port there.
 - Some handy constants, like `Color::WHITE` or `Tuple::ORIGIN`
 - Organize within-crate imports to make `use crate::` style the path of least resistance
+
+# Chapter 9
+
+### How to do inheritance in Rust
+
+I found a good Reddit thread:
+https://www.reddit.com/r/rust/comments/sm2ztn/inheritance_in_rust/
+
+Here's the gist:
+
+- You pretty much always need a trait to define the shared behavior, e.g. `trait MyBehavior { fn my_trait_method(&self); }`
+- From there you can either:
+  - Make it a `dyn Hittable` and wrap in `Box` (typical) or implement `Sized` (uncommon), `let thing: Box<dyn Hittable> = Box::new(Sphere::new())`
+  - Put it in an `enum` like `enum Object { Sphere(Sphere), Cube(Cube) }` and then `impl Hittable for Object {...}` for `Object::Sphere(Sphere::new(...))`
+  - Use [enum_dispatch](https://crates.io/crates/enum_dispatch) to take the boilerplate out of the enum approach
+- There also is some mention of `Rc` to hold references, which seems nicer than the `&'a` thing I had to do, but not totally relevant here.
+
+After all that I'm going with the `enum_dispatch` approach, since it seems very easy to read/understand (low boilerplate) and is all compile time so it's fast and safe.
+
+**Update:** well that was a goat rodeo. Rust is making the types really hard to work with. I eventually ended up in a snarl where the inner `Sphere` needs to pass the wrapping `Shape` enum into the `Intersections`, but it can only access `self` which doesn't have a pointer to the wrapping class. Maybe there's a way around that, but I'm going to try the `Box` approach instead when I get back to this tomorrow.
