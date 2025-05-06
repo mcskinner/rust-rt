@@ -40,12 +40,6 @@ impl HittableTrait for Sphere {
     }
 }
 
-impl From<Sphere> for Hittable {
-    fn from(s: Sphere) -> Self {
-        Hittable::Sphere(s)
-    }
-}
-
 impl PartialEq for Sphere {
     fn eq(&self, other: &Self) -> bool {
         self as *const _ == other as *const _

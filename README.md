@@ -144,4 +144,8 @@ Well that was a goat rodeo. Rust is making the types really hard to work with. I
 
 I finally got it working using the enum approach, but with a twist. Rather than putting everything in one abstraction, I split it in two.
 
-The entrypoint `Shape` is just a concrete struct and implementation. That handles the common logic for setting transforms and materials, since that doesn't vary by implementation. And also the template pattern for managing world<->local coordinates during intersection and normal calculation. To facilitate that last part, it takes a `Hittable` enum, which implements a `HittableTrait` and carries the abstractions for computing local intersections and normals. That's the only responsibility for new objects to implement.
+The entrypoint `Shape` is just a concrete struct and implementation. That handles the common logic for setting transforms and materials, since that doesn't vary by implementation but also requires storage (so it can't be a trait). It also implements the template pattern for managing world<->local coordinates during intersection and normal calculation. To facilitate that last part, it takes a `Hittable` enum, which wraps the implementations of `HittableTrait`, the abstraction for computing local intersections and normals. That's the only responsibility for new objects to implement.
+
+After a bit of fidgeting I was then able to patch `enum_dispatch` back in for the `Hittable` and `HittableTrait` pair, plus a little bit of fancy footwork to declare a generic `impl<T: Into<Hittable>> From<T> for Shape` once and for all.
+
+I'm still not sure I love this final approach, since it's closed to modification (no new subclasses without adding to the enum). But at least it's working and I can move on with the rest of the exercises.

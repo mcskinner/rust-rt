@@ -6,6 +6,7 @@ use crate::matrix::Matrix;
 use crate::ray::Ray;
 use crate::sphere::Sphere;
 use crate::tuple::Tuple;
+use enum_dispatch::enum_dispatch;
 
 #[derive(Debug, Clone, AbsDiffEq)]
 pub struct Shape {
@@ -15,28 +16,16 @@ pub struct Shape {
     pub material: Material,
 }
 
+#[enum_dispatch]
 pub trait HittableTrait {
     fn local_intersect(&self, local_ray: &Ray) -> Vec<f64>;
     fn local_normal_at(&self, local_point: &Tuple) -> Tuple;
 }
 
 #[derive(Debug, Clone, PartialEq, AbsDiffEq)]
+#[enum_dispatch(HittableTrait)]
 pub enum Hittable {
     Sphere(Sphere),
-}
-
-impl HittableTrait for Hittable {
-    fn local_intersect(&self, local_ray: &Ray) -> Vec<f64> {
-        match self {
-            Hittable::Sphere(sphere) => sphere.local_intersect(local_ray),
-        }
-    }
-
-    fn local_normal_at(&self, local_point: &Tuple) -> Tuple {
-        match self {
-            Hittable::Sphere(sphere) => sphere.local_normal_at(local_point),
-        }
-    }
 }
 
 impl Shape {
@@ -79,9 +68,9 @@ impl Shape {
     }
 }
 
-impl From<Sphere> for Shape {
-    fn from(s: Sphere) -> Self {
-        Shape::new(Hittable::Sphere(s))
+impl<T: Into<Hittable>> From<T> for Shape {
+    fn from(hittable: T) -> Self {
+        Shape::new(hittable.into())
     }
 }
 
