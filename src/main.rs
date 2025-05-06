@@ -6,6 +6,7 @@ mod light;
 mod material;
 mod matrix;
 mod ray;
+mod shape;
 mod sphere;
 mod tuple;
 mod world;
@@ -16,6 +17,7 @@ use crate::color::Color;
 use crate::light::Light;
 use crate::material::Material;
 use crate::matrix::Matrix;
+use crate::shape::Shape;
 use crate::sphere::Sphere;
 use crate::tuple::{Tuple, point, vector};
 use crate::world::World;
@@ -106,8 +108,8 @@ fn render_sphere() {
     let size = 400;
     let mut c = canvas(size, size);
     let m = Material::new().with_rgb(1.0, 0.2, 1.0);
-    let s = Sphere::new()
-        .set_material(&m)
+    let mut s: Shape = Sphere::new().into();
+    s.set_material(&m)
         .set_transform(&Matrix::translation(0.0, 0.0, 2.0));
 
     let camera = point(0.0, 0.0, -5.0);
@@ -140,18 +142,21 @@ fn render_sphere() {
 
 fn render_chapter7_scene() {
     let m = Material::new().with_rgb(1.0, 0.9, 0.9).with_specular(0.0);
-    let floor = Sphere::new()
+    let mut floor: Shape = Sphere::new().into();
+    floor
         .set_material(&m)
         .set_transform(&Matrix::scaling(10.0, 0.01, 10.0));
 
-    let left_wall = Sphere::new().set_material(&m).set_transform(
+    let mut left_wall: Shape = Sphere::new().into();
+    left_wall.set_material(&m).set_transform(
         &(Matrix::translation(0.0, 0.0, 5.0)
             * Matrix::rotation_y(-FRAC_PI_4)
             * Matrix::rotation_x(FRAC_PI_2)
             * Matrix::scaling(10.0, 0.01, 10.0)),
     );
 
-    let right_wall = Sphere::new().set_material(&m).set_transform(
+    let mut right_wall: Shape = Sphere::new().into();
+    right_wall.set_material(&m).set_transform(
         &(Matrix::translation(0.0, 0.0, 5.0)
             * Matrix::rotation_y(FRAC_PI_4)
             * Matrix::rotation_x(FRAC_PI_2)
@@ -162,7 +167,8 @@ fn render_chapter7_scene() {
         .with_rgb(0.1, 1.0, 0.5)
         .with_diffuse(0.7)
         .with_specular(0.3);
-    let middle = Sphere::new()
+    let mut middle: Shape = Sphere::new().into();
+    middle
         .set_material(&m)
         .set_transform(&Matrix::translation(-0.5, 1.0, 0.5));
 
@@ -170,7 +176,8 @@ fn render_chapter7_scene() {
         .with_rgb(0.5, 1.0, 0.1)
         .with_diffuse(0.7)
         .with_specular(0.3);
-    let right = Sphere::new()
+    let mut right: Shape = Sphere::new().into();
+    right
         .set_material(&m)
         .set_transform(&(Matrix::translation(1.5, 0.5, -0.5) * Matrix::scaling(0.5, 0.5, 0.5)));
 
@@ -178,7 +185,8 @@ fn render_chapter7_scene() {
         .with_rgb(1.0, 0.8, 0.1)
         .with_diffuse(0.7)
         .with_specular(0.3);
-    let left = Sphere::new().set_material(&m).set_transform(
+    let mut left: Shape = Sphere::new().into();
+    left.set_material(&m).set_transform(
         &(Matrix::translation(-1.5, 0.33, -0.75) * Matrix::scaling(0.33, 0.33, 0.33)),
     );
 
@@ -192,12 +200,12 @@ fn render_chapter7_scene() {
     ));
 
     let world = World::new()
-        .add_object(floor)
-        .add_object(left_wall)
-        .add_object(right_wall)
-        .add_object(middle)
-        .add_object(left)
-        .add_object(right)
+        .add_object(floor.into())
+        .add_object(left_wall.into())
+        .add_object(right_wall.into())
+        .add_object(middle.into())
+        .add_object(left.into())
+        .add_object(right.into())
         .add_light(light);
 
     let canvas = camera.render(&world);

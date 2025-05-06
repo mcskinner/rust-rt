@@ -136,4 +136,12 @@ Here's the gist:
 
 After all that I'm going with the `enum_dispatch` approach, since it seems very easy to read/understand (low boilerplate) and is all compile time so it's fast and safe.
 
-**Update:** well that was a goat rodeo. Rust is making the types really hard to work with. I eventually ended up in a snarl where the inner `Sphere` needs to pass the wrapping `Shape` enum into the `Intersections`, but it can only access `self` which doesn't have a pointer to the wrapping class. Maybe there's a way around that, but I'm going to try the `Box` approach instead when I get back to this tomorrow.
+#### Update
+
+Well that was a goat rodeo. Rust is making the types really hard to work with. I eventually ended up in a snarl where the inner `Sphere` needs to pass the wrapping `Shape` enum into the `Intersections`, but it can only access `self` which doesn't have a pointer to the wrapping class. Maybe there's a way around that, but I'm going to try the `Box` approach instead when I get back to this tomorrow.
+
+#### Round 2
+
+I finally got it working using the enum approach, but with a twist. Rather than putting everything in one abstraction, I split it in two.
+
+The entrypoint `Shape` is just a concrete struct and implementation. That handles the common logic for setting transforms and materials, since that doesn't vary by implementation. And also the template pattern for managing world<->local coordinates during intersection and normal calculation. To facilitate that last part, it takes a `Hittable` enum, which implements a `HittableTrait` and carries the abstractions for computing local intersections and normals. That's the only responsibility for new objects to implement.

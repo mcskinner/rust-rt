@@ -4,12 +4,13 @@ use crate::light::Light;
 use crate::material::Material;
 use crate::matrix::Matrix;
 use crate::ray::Ray;
+use crate::shape::Shape;
 use crate::sphere::Sphere;
 use crate::tuple::{Tuple, point};
 
 pub struct World {
     lights: Vec<Light>,
-    objects: Vec<Sphere>,
+    objects: Vec<Shape>,
 }
 
 impl World {
@@ -27,8 +28,12 @@ impl World {
             .with_rgb(0.8, 1.0, 0.6)
             .with_diffuse(0.7)
             .with_specular(0.2);
-        let s1 = Sphere::new().set_material(&m);
-        let s2 = Sphere::new().set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
+
+        let mut s1: Shape = Sphere::new().into();
+        s1.set_material(&m);
+
+        let mut s2: Shape = Sphere::new().into();
+        s2.set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
 
         World {
             lights: vec![light],
@@ -36,7 +41,7 @@ impl World {
         }
     }
 
-    pub fn add_object(mut self, object: Sphere) -> Self {
+    pub fn add_object(mut self, object: Shape) -> Self {
         self.objects.push(object);
         self
     }
@@ -112,9 +117,11 @@ mod tests {
             .with_rgb(0.8, 1.0, 0.6)
             .with_diffuse(0.7)
             .with_specular(0.2);
-        let s1 = Sphere::new().set_material(&m);
+        let mut s1: Shape = Sphere::new().into();
+        s1.set_material(&m);
 
-        let s2 = Sphere::new().set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
+        let mut s2: Shape = Sphere::new().into();
+        s2.set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
 
         assert_eq!(w.lights.len(), 1);
         assert_eq!(w.lights[0], light);
@@ -181,7 +188,7 @@ mod tests {
 
         let mut outer = w.objects[0].clone();
         let outer_material = outer.material.clone().with_ambient(1.0);
-        outer = outer.set_material(&outer_material);
+        outer.set_material(&outer_material);
 
         let mut inner = w.objects[1].clone();
         let inner_color = Color::new(1.0, 0.6, 0.2);
@@ -190,7 +197,7 @@ mod tests {
             .clone()
             .with_ambient(1.0)
             .with_color(inner_color);
-        inner = inner.set_material(&inner_material);
+        inner.set_material(&inner_material);
 
         w.objects = vec![outer, inner];
 
@@ -229,8 +236,9 @@ mod tests {
 
     #[test]
     fn test_shade_hit_is_given_an_intersection_in_shadow() {
-        let s1 = Sphere::new();
-        let s2 = Sphere::new().set_transform(&Matrix::translation(0.0, 0.0, 10.0));
+        let s1: Shape = Sphere::new().into();
+        let mut s2: Shape = Sphere::new().into();
+        s2.set_transform(&Matrix::translation(0.0, 0.0, 10.0));
         let w = World::new()
             .add_light(Light::new(point(0.0, 0.0, -10.0), Color::WHITE))
             .add_object(s1)
