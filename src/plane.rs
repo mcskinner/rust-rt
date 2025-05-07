@@ -11,7 +11,10 @@ impl Plane {
 }
 
 impl HittableTrait for Plane {
-    fn local_intersect(&self, _ray: &Ray) -> Vec<f64> {
+    fn local_intersect(&self, ray: &Ray) -> Vec<f64> {
+        if ray.direction.y.abs() < 1e-9 {
+            return vec![];
+        }
         vec![]
     }
 
@@ -34,5 +37,21 @@ mod tests {
         assert_eq!(n1, vector(0.0, 1.0, 0.0));
         assert_eq!(n2, vector(0.0, 1.0, 0.0));
         assert_eq!(n3, vector(0.0, 1.0, 0.0));
+    }
+
+    #[test]
+    fn test_intersect_with_a_ray_parallel_to_the_plane() {
+        let p = Plane::new();
+        let r = Ray::new(point(0.0, 10.0, 0.0), vector(0.0, 0.0, 1.0));
+        let xs = p.local_intersect(&r);
+        assert_eq!(xs.len(), 0);
+    }
+
+    #[test]
+    fn test_intersect_with_a_coplanar_ray() {
+        let p = Plane::new();
+        let r = Ray::new(point(0.0, 0.0, 0.0), vector(0.0, 0.0, 1.0));
+        let xs = p.local_intersect(&r);
+        assert_eq!(xs.len(), 0);
     }
 }
