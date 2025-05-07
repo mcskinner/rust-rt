@@ -3,6 +3,7 @@ use approx_derive::AbsDiffEq;
 use crate::intersection::{Intersection, Intersections};
 use crate::material::Material;
 use crate::matrix::Matrix;
+use crate::plane::Plane;
 use crate::ray::Ray;
 use crate::sphere::Sphere;
 use crate::tuple::Tuple;
@@ -26,6 +27,7 @@ pub trait HittableTrait {
 #[enum_dispatch(HittableTrait)]
 pub enum Hittable {
     Sphere(Sphere),
+    Plane(Plane),
 }
 
 impl Shape {

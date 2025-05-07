@@ -18,6 +18,7 @@ use crate::color::Color;
 use crate::light::Light;
 use crate::material::Material;
 use crate::matrix::Matrix;
+use crate::plane::Plane;
 use crate::shape::Shape;
 use crate::sphere::Sphere;
 use crate::tuple::{Tuple, point, vector};
@@ -143,25 +144,21 @@ fn render_sphere() {
 
 fn render_chapter7_scene() {
     let m = Material::new().with_rgb(1.0, 0.9, 0.9).with_specular(0.0);
-    let mut floor: Shape = Sphere::new().into();
-    floor
-        .set_material(&m)
-        .set_transform(&Matrix::scaling(10.0, 0.01, 10.0));
+    let mut floor: Shape = Plane::new().into();
+    floor.set_material(&m);
 
-    let mut left_wall: Shape = Sphere::new().into();
+    let mut left_wall: Shape = Plane::new().into();
     left_wall.set_material(&m).set_transform(
         &(Matrix::translation(0.0, 0.0, 5.0)
             * Matrix::rotation_y(-FRAC_PI_4)
-            * Matrix::rotation_x(FRAC_PI_2)
-            * Matrix::scaling(10.0, 0.01, 10.0)),
+            * Matrix::rotation_x(FRAC_PI_2)),
     );
 
-    let mut right_wall: Shape = Sphere::new().into();
+    let mut right_wall: Shape = Plane::new().into();
     right_wall.set_material(&m).set_transform(
         &(Matrix::translation(0.0, 0.0, 5.0)
             * Matrix::rotation_y(FRAC_PI_4)
-            * Matrix::rotation_x(FRAC_PI_2)
-            * Matrix::scaling(10.0, 0.01, 10.0)),
+            * Matrix::rotation_x(FRAC_PI_2)),
     );
 
     let m = Material::new()

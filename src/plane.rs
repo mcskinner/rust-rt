@@ -1,7 +1,10 @@
+use approx_derive::AbsDiffEq;
+
 use crate::ray::Ray;
 use crate::shape::HittableTrait;
 use crate::tuple::{Tuple, vector};
 
+#[derive(Debug, Clone, PartialEq, AbsDiffEq)]
 pub struct Plane {}
 
 impl Plane {
