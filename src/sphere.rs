@@ -113,20 +113,6 @@ mod tests {
     }
 
     #[test]
-    fn test_a_spheres_default_transformation() {
-        let s: Shape = Sphere::new().into();
-        assert_eq!(s.transform, Matrix::identity(4));
-    }
-
-    #[test]
-    fn test_changing_a_spheres_transformation() {
-        let m = Matrix::translation(2.0, 3.0, 4.0);
-        let mut s: Shape = Sphere::new().into();
-        s.set_transform(&m);
-        assert_eq!(s.transform, m);
-    }
-
-    #[test]
     fn test_intersecting_a_scaled_sphere_with_a_ray() {
         let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
         let mut s: Shape = Sphere::new().into();
@@ -214,19 +200,5 @@ mod tests {
             -std::f64::consts::FRAC_1_SQRT_2,
         ));
         assert_abs_diff_eq!(n, vector(0.0, 0.97014, -0.24254), epsilon = 0.00001);
-    }
-
-    #[test]
-    fn test_sphere_has_default_material() {
-        let s: Shape = Sphere::new().into();
-        assert_eq!(s.material, Material::new());
-    }
-
-    #[test]
-    fn test_sphere_may_be_assigned_a_material() {
-        let m = Material::new().with_ambient(1.0);
-        let mut s: Shape = Sphere::new().into();
-        s.set_material(&m);
-        assert_eq!(s.material, m);
     }
 }

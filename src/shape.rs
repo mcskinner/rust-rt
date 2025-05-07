@@ -70,12 +70,49 @@ impl Shape {
 
 impl<T: Into<Hittable>> From<T> for Shape {
     fn from(hittable: T) -> Self {
-        Shape::new(hittable.into())
+        Self::new(hittable.into())
     }
 }
 
 impl PartialEq for Shape {
     fn eq(&self, other: &Self) -> bool {
         self as *const _ == other as *const _
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn test_shape() -> Shape {
+        Sphere::new().into()
+    }
+
+    #[test]
+    fn test_the_default_transformation() {
+        let s: Shape = test_shape();
+        assert_eq!(s.transform, Matrix::identity(4));
+    }
+
+    #[test]
+    fn test_assigning_a_transformation() {
+        let mut s: Shape = test_shape();
+        let m = Matrix::translation(2.0, 3.0, 4.0);
+        s.set_transform(&m);
+        assert_eq!(s.transform, m);
+    }
+
+    #[test]
+    fn test_the_default_material() {
+        let s: Shape = test_shape();
+        assert_eq!(s.material, Material::new());
+    }
+
+    #[test]
+    fn test_assigning_a_material() {
+        let mut s: Shape = test_shape();
+        let m = Material::new().with_ambient(1.0);
+        s.set_material(&m);
+        assert_eq!(s.material, m);
     }
 }
