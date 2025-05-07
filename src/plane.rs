@@ -15,7 +15,7 @@ impl HittableTrait for Plane {
         if ray.direction.y.abs() < 1e-9 {
             return vec![];
         }
-        vec![]
+        vec![-ray.origin.y / ray.direction.y]
     }
 
     fn local_normal_at(&self, _point: &Tuple) -> Tuple {
@@ -53,5 +53,23 @@ mod tests {
         let r = Ray::new(point(0.0, 0.0, 0.0), vector(0.0, 0.0, 1.0));
         let xs = p.local_intersect(&r);
         assert_eq!(xs.len(), 0);
+    }
+
+    #[test]
+    fn test_intersect_with_a_ray_from_above() {
+        let p = Plane::new();
+        let r = Ray::new(point(0.0, 1.0, 0.0), vector(0.0, -1.0, 0.0));
+        let xs = p.local_intersect(&r);
+        assert_eq!(xs.len(), 1);
+        assert_eq!(xs[0], 1.0);
+    }
+
+    #[test]
+    fn test_intersect_with_a_ray_from_below() {
+        let p = Plane::new();
+        let r = Ray::new(point(0.0, -1.0, 0.0), vector(0.0, 1.0, 0.0));
+        let xs = p.local_intersect(&r);
+        assert_eq!(xs.len(), 1);
+        assert_eq!(xs[0], 1.0);
     }
 }
