@@ -22,7 +22,7 @@ pub enum Hittable {
     Plane(Plane),
 }
 
-#[derive(Debug, Clone, AbsDiffEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Shape {
     hittable: Hittable,
     pub transform: Matrix,
@@ -73,12 +73,6 @@ impl Shape {
 impl<T: Into<Hittable>> From<T> for Shape {
     fn from(hittable: T) -> Self {
         Self::new(hittable.into())
-    }
-}
-
-impl PartialEq for Shape {
-    fn eq(&self, other: &Self) -> bool {
-        self as *const _ == other as *const _
     }
 }
 

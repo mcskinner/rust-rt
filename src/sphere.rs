@@ -4,7 +4,7 @@ use crate::ray::Ray;
 use crate::shape::HittableTrait;
 use crate::tuple::Tuple;
 
-#[derive(Debug, Clone, AbsDiffEq)]
+#[derive(Debug, Clone, PartialEq, AbsDiffEq)]
 pub struct Sphere {}
 
 impl Sphere {
@@ -37,12 +37,6 @@ impl HittableTrait for Sphere {
 
     fn local_normal_at(&self, local_point: &Tuple) -> Tuple {
         *local_point - Tuple::ORIGIN
-    }
-}
-
-impl PartialEq for Sphere {
-    fn eq(&self, other: &Self) -> bool {
-        self as *const _ == other as *const _
     }
 }
 

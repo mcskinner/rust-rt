@@ -127,8 +127,8 @@ mod tests {
         assert_eq!(w.lights[0], light);
 
         assert_eq!(w.objects.len(), 2);
-        assert_abs_diff_eq!(w.objects[0], s1);
-        assert_abs_diff_eq!(w.objects[1], s2);
+        assert_eq!(w.objects[0], s1);
+        assert_eq!(w.objects[1], s2);
     }
 
     #[test]
