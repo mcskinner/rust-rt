@@ -1,12 +1,12 @@
-use approx_derive::AbsDiffEq;
-
 use crate::color::Color;
 use crate::light::Light;
+use crate::pattern::StripePattern;
 use crate::tuple::Tuple;
 
-#[derive(Debug, Clone, PartialEq, AbsDiffEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Material {
     color: Color,
+    pattern: Option<StripePattern>,
     ambient: f64,
     diffuse: f64,
     specular: f64,
@@ -17,6 +17,7 @@ impl Material {
     pub fn new() -> Material {
         Material {
             color: Color::WHITE,
+            pattern: None,
             ambient: 0.1,
             diffuse: 0.9,
             specular: 0.9,
@@ -31,6 +32,11 @@ impl Material {
 
     pub fn with_color(mut self, color: Color) -> Self {
         self.color = color;
+        self
+    }
+
+    fn with_pattern(mut self, new: StripePattern) -> Self {
+        self.pattern = Some(new.clone());
         self
     }
 
@@ -62,7 +68,13 @@ impl Material {
         normalv: &Tuple,
         in_shadow: bool,
     ) -> Color {
-        let effective_color = self.color * light.intensity;
+        let base_color = if let Some(pattern) = &self.pattern {
+            pattern.color_at(position)
+        } else {
+            self.color
+        };
+
+        let effective_color = base_color * light.intensity;
         let lightv = (light.position - *position).normalize();
         let ambient = effective_color * self.ambient;
 
@@ -181,5 +193,24 @@ mod tests {
         let light = Light::new(point(0.0, 0.0, -10.0), Color::WHITE);
         let result = m.lighting(&light, &position, &eyev, &normalv, true);
         assert_eq!(result, Color::new(0.1, 0.1, 0.1));
+    }
+
+    #[test]
+    fn test_lighting_with_a_pattern_applied() {
+        let m = Material::new()
+            .with_pattern(StripePattern::new(
+                Color::new(1.0, 1.0, 1.0),
+                Color::new(0.0, 0.0, 0.0),
+            ))
+            .with_ambient(1.0)
+            .with_diffuse(0.0)
+            .with_specular(0.0);
+        let eyev = vector(0.0, 0.0, -1.0);
+        let normalv = vector(0.0, 0.0, -1.0);
+        let light = Light::new(point(0.0, 0.0, -10.0), Color::WHITE);
+        let c1 = m.lighting(&light, &point(0.9, 0.0, 0.0), &eyev, &normalv, false);
+        let c2 = m.lighting(&light, &point(1.1, 0.0, 0.0), &eyev, &normalv, false);
+        assert_eq!(c1, Color::WHITE);
+        assert_eq!(c2, Color::BLACK);
     }
 }
