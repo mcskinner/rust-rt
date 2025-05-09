@@ -9,14 +9,6 @@ use crate::sphere::Sphere;
 use crate::tuple::Tuple;
 use enum_dispatch::enum_dispatch;
 
-#[derive(Debug, Clone, AbsDiffEq)]
-pub struct Shape {
-    hittable: Hittable,
-    pub transform: Matrix,
-    pub inverse_transform: Matrix,
-    pub material: Material,
-}
-
 #[enum_dispatch]
 pub trait HittableTrait {
     fn local_intersect(&self, local_ray: &Ray) -> Vec<f64>;
@@ -28,6 +20,14 @@ pub trait HittableTrait {
 pub enum Hittable {
     Sphere(Sphere),
     Plane(Plane),
+}
+
+#[derive(Debug, Clone, AbsDiffEq)]
+pub struct Shape {
+    hittable: Hittable,
+    pub transform: Matrix,
+    pub inverse_transform: Matrix,
+    pub material: Material,
 }
 
 impl Shape {
