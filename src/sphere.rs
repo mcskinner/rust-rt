@@ -1,7 +1,7 @@
 use approx_derive::AbsDiffEq;
 
 use crate::ray::Ray;
-use crate::shape::{Hittable, HittableTrait};
+use crate::shape::HittableTrait;
 use crate::tuple::Tuple;
 
 #[derive(Debug, Clone, AbsDiffEq)]
@@ -49,7 +49,6 @@ impl PartialEq for Sphere {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::material::Material;
     use crate::matrix::Matrix;
     use crate::shape::Shape;
     use crate::tuple::{point, vector};
