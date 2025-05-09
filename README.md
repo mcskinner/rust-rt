@@ -149,3 +149,11 @@ The entrypoint `Shape` is just a concrete struct and implementation. That handle
 After a bit of fidgeting I was then able to patch `enum_dispatch` back in for the `Hittable` and `HittableTrait` pair, plus a little bit of fancy footwork to declare a generic `impl<T: Into<Hittable>> From<T> for Shape` once and for all.
 
 I'm still not sure I love this final approach, since it's closed to modification (no new subclasses without adding to the enum). But at least it's working and I can move on with the rest of the exercises.
+
+#### Round 3
+
+I tried to get rid of some duplication, both using template parameters and `Box<dyn HittableTrait>`, and failed both times.
+
+With template parameters, it wanted me to implement for every subtype. I couldn't figure out the generic logic. Re-read my reference though and might try that again.
+
+For `Box` the blocker was all the `derive`'d functionality, like `Debug` and `Clone` which are used somewhat extensively. That seems like a lot to sacrifice for a not-technically-required open-closed implementation.
