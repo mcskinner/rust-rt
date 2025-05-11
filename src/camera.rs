@@ -7,7 +7,6 @@ use crate::world::World;
 pub struct Camera {
     width: usize,
     height: usize,
-    fov: f64,
     half_width: f64,
     half_height: f64,
     pixel_size: f64,
@@ -28,7 +27,6 @@ impl Camera {
         Self {
             width,
             height,
-            fov,
             half_width,
             half_height,
             pixel_size,
@@ -78,7 +76,6 @@ mod tests {
         let c = Camera::new(160, 120, FRAC_PI_2);
         assert_eq!(c.width, 160);
         assert_eq!(c.height, 120);
-        assert_eq!(c.fov, FRAC_PI_2);
         assert_eq!(c.transform, Matrix::identity(4));
     }
 

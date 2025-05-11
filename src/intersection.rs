@@ -22,25 +22,21 @@ impl Intersection<'_> {
         }
         let over_point = point + normalv * 1e-9;
         Computations {
-            t: self.t,
             object: self.object,
             point,
             eyev,
             normalv,
             over_point,
-            inside,
         }
     }
 }
 
 pub struct Computations<'a> {
-    pub t: f64,
     pub object: &'a Shape,
     pub point: Tuple,
     pub eyev: Tuple,
     pub normalv: Tuple,
     pub over_point: Tuple,
-    pub inside: bool,
 }
 
 pub struct Intersections<'a> {
@@ -140,7 +136,6 @@ mod tests {
         let s = Sphere::new().into();
         let i = Intersection::new(4.0, &s);
         let comps = i.prepare_computations(&r);
-        assert_eq!(comps.t, i.t);
         assert_eq!(comps.object, i.object);
         assert_eq!(comps.point, point(0.0, 0.0, -1.0));
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
@@ -153,7 +148,9 @@ mod tests {
         let shape = Sphere::new().into();
         let i = Intersection::new(4.0, &shape);
         let comps = i.prepare_computations(&r);
-        assert_eq!(comps.inside, false);
+        assert_eq!(comps.point, point(0.0, 0.0, -1.0));
+        assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
+        assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
     }
 
     #[test]
@@ -165,7 +162,6 @@ mod tests {
         assert_eq!(comps.point, point(0.0, 0.0, 1.0));
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
         assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
-        assert_eq!(comps.inside, true);
     }
 
     #[test]
