@@ -1,12 +1,9 @@
 use crate::color::Color;
 use crate::intersection::{Computations, Intersections};
 use crate::light::Light;
-use crate::material::Material;
-use crate::matrix::Matrix;
 use crate::ray::Ray;
 use crate::shape::Shape;
-use crate::sphere::Sphere;
-use crate::tuple::{Tuple, point};
+use crate::tuple::Tuple;
 
 pub struct World {
     lights: Vec<Light>,
@@ -18,26 +15,6 @@ impl World {
         World {
             lights: Vec::new(),
             objects: Vec::new(),
-        }
-    }
-
-    pub fn default() -> World {
-        let light = Light::new(point(-10.0, 10.0, -10.0), Color::WHITE);
-
-        let m = Material::new()
-            .with_rgb(0.8, 1.0, 0.6)
-            .with_diffuse(0.7)
-            .with_specular(0.2);
-
-        let mut s1: Shape = Sphere::new().into();
-        s1.set_material(&m);
-
-        let mut s2: Shape = Sphere::new().into();
-        s2.set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
-
-        World {
-            lights: vec![light],
-            objects: vec![s1, s2],
         }
     }
 
@@ -98,8 +75,31 @@ impl World {
 mod tests {
     use super::*;
     use crate::intersection::Intersection;
-    use crate::tuple::vector;
+    use crate::material::Material;
+    use crate::matrix::Matrix;
+    use crate::sphere::Sphere;
+    use crate::tuple::{point, vector};
     use approx::assert_abs_diff_eq;
+
+    fn default_world() -> World {
+        let light = Light::new(point(-10.0, 10.0, -10.0), Color::WHITE);
+
+        let m = Material::new()
+            .with_rgb(0.8, 1.0, 0.6)
+            .with_diffuse(0.7)
+            .with_specular(0.2);
+
+        let mut s1: Shape = Sphere::new().into();
+        s1.set_material(&m);
+
+        let mut s2: Shape = Sphere::new().into();
+        s2.set_transform(&Matrix::scaling(0.5, 0.5, 0.5));
+
+        World {
+            lights: vec![light],
+            objects: vec![s1, s2],
+        }
+    }
 
     #[test]
     fn test_creating_a_world() {
@@ -110,7 +110,7 @@ mod tests {
 
     #[test]
     fn test_the_default_world() {
-        let w = World::default();
+        let w = default_world();
         let light = Light::new(point(-10.0, 10.0, -10.0), Color::WHITE);
 
         let m = Material::new()
@@ -133,7 +133,7 @@ mod tests {
 
     #[test]
     fn test_intersect_a_world_with_a_ray() {
-        let w = World::default();
+        let w = default_world();
         let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
         let xs = w.intersect(&r);
         assert_eq!(xs.xs.len(), 4);
@@ -145,7 +145,7 @@ mod tests {
 
     #[test]
     fn test_shading_an_intersection() {
-        let w = World::default();
+        let w = default_world();
         let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
         let shape = &w.objects[0];
         let i = Intersection::new(4.0, shape);
@@ -156,7 +156,7 @@ mod tests {
 
     #[test]
     fn test_shading_an_intersection_from_inside() {
-        let mut w = World::default();
+        let mut w = default_world();
         w.lights[0] = Light::new(point(0.0, 0.25, 0.0), Color::WHITE);
         let r = Ray::new(Tuple::ORIGIN, vector(0.0, 0.0, 1.0));
         let shape = &w.objects[1];
@@ -168,7 +168,7 @@ mod tests {
 
     #[test]
     fn test_color_when_a_ray_misses() {
-        let w = World::default();
+        let w = default_world();
         let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 1.0, 0.0));
         let c = w.color_at(&r);
         assert_eq!(c, Color::BLACK);
@@ -176,7 +176,7 @@ mod tests {
 
     #[test]
     fn test_color_when_a_ray_hits() {
-        let w = World::default();
+        let w = default_world();
         let r = Ray::new(point(0.0, 0.0, -5.0), vector(0.0, 0.0, 1.0));
         let c = w.color_at(&r);
         assert_abs_diff_eq!(c, Color::new(0.38066, 0.47583, 0.2855), epsilon = 0.00001);
@@ -184,7 +184,7 @@ mod tests {
 
     #[test]
     fn test_color_with_an_intersection_behind_the_ray() {
-        let mut w = World::default();
+        let mut w = default_world();
 
         let mut outer = w.objects[0].clone();
         let outer_material = outer.material.clone().with_ambient(1.0);
@@ -208,28 +208,28 @@ mod tests {
 
     #[test]
     fn test_no_shadow_when_nothing_collinear_with_point_and_light() {
-        let w = World::default();
+        let w = default_world();
         let p = point(0.0, 10.0, 0.0);
         assert_eq!(w.is_shadowed(&p, &w.lights[0]), false);
     }
 
     #[test]
     fn test_shadow_when_an_object_is_between_the_point_and_the_light() {
-        let w = World::default();
+        let w = default_world();
         let p = point(10.0, -10.0, 10.0);
         assert_eq!(w.is_shadowed(&p, &w.lights[0]), true);
     }
 
     #[test]
     fn test_no_shadow_when_an_object_is_behind_the_light() {
-        let w = World::default();
+        let w = default_world();
         let p = point(-20.0, 20.0, -20.0);
         assert_eq!(w.is_shadowed(&p, &w.lights[0]), false);
     }
 
     #[test]
     fn test_no_shadow_when_an_object_is_behind_the_point() {
-        let w = World::default();
+        let w = default_world();
         let p = point(-2.0, 2.0, -2.0);
         assert_eq!(w.is_shadowed(&p, &w.lights[0]), false);
     }
