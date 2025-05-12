@@ -19,9 +19,6 @@ impl Canvas {
             pixels,
         }
     }
-    pub fn pixel_at(&self, x: usize, y: usize) -> Color {
-        self.pixels[y][x]
-    }
 
     pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
         if x < self.width && y < self.height {
@@ -82,7 +79,7 @@ mod tests {
         let mut c = canvas(10, 20);
         let red = Color::new(1.0, 0.0, 0.0);
         c.write_pixel(2, 3, red);
-        assert_eq!(c.pixel_at(2, 3), red);
+        assert_eq!(c.pixels[3][2], red);
     }
 
     #[test]
