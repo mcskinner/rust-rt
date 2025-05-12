@@ -13,7 +13,7 @@ impl StripePattern {
     }
 
     pub fn color_at(&self, point: &Tuple) -> Color {
-        if ((point.x % 2.0) + 2.0) % 2.0 < 1.0 {
+        if point.x.rem_euclid(2.0) < 1.0 {
             self.a
         } else {
             self.b
