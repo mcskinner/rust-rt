@@ -8,6 +8,7 @@ pub struct StripePattern {
 }
 
 impl StripePattern {
+    #[allow(dead_code)]
     pub fn new(a: Color, b: Color) -> Self {
         StripePattern { a, b }
     }

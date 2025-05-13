@@ -13,6 +13,7 @@ pub struct Material {
     shininess: f64,
 }
 
+#[allow(dead_code)]
 impl Material {
     pub fn new() -> Material {
         Material {
@@ -25,36 +26,43 @@ impl Material {
         }
     }
 
+    #[allow(dead_code)]
     pub fn with_rgb(mut self, r: f64, g: f64, b: f64) -> Self {
         self.color = Color::new(r, g, b);
         self
     }
 
+    #[allow(dead_code)]
     pub fn with_color(mut self, color: Color) -> Self {
         self.color = color;
         self
     }
 
+    #[allow(dead_code)]
     fn with_pattern(mut self, new: StripePattern) -> Self {
         self.pattern = Some(new.clone());
         self
     }
 
+    #[allow(dead_code)]
     pub fn with_ambient(mut self, ambient: f64) -> Self {
         self.ambient = ambient;
         self
     }
 
+    #[allow(dead_code)]
     pub fn with_diffuse(mut self, diffuse: f64) -> Self {
         self.diffuse = diffuse;
         self
     }
 
+    #[allow(dead_code)]
     pub fn with_specular(mut self, specular: f64) -> Self {
         self.specular = specular;
         self
     }
 
+    #[allow(dead_code)]
     pub fn with_shininess(mut self, shininess: f64) -> Self {
         self.shininess = shininess;
         self
