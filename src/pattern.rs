@@ -1,4 +1,5 @@
 use crate::color::Color;
+use crate::matrix::Matrix;
 use crate::shape::Shape;
 use crate::tuple::Tuple;
 
@@ -6,12 +7,25 @@ use crate::tuple::Tuple;
 pub struct StripePattern {
     a: Color,
     b: Color,
+    transform: Matrix,
+    inverse_transform: Matrix,
 }
 
 impl StripePattern {
     #[allow(dead_code)]
     pub fn new(a: Color, b: Color) -> Self {
-        StripePattern { a, b }
+        StripePattern {
+            a,
+            b,
+            transform: Matrix::identity(4),
+            inverse_transform: Matrix::identity(4),
+        }
+    }
+
+    fn set_transform(&mut self, transform: &Matrix) -> &mut Self {
+        self.transform = transform.clone();
+        self.inverse_transform = transform.inverse();
+        self
     }
 
     pub fn color_at(&self, point: &Tuple) -> Color {
@@ -24,14 +38,14 @@ impl StripePattern {
 
     fn color_at_object(&self, object: &Shape, point: &Tuple) -> Color {
         let local_point = &object.inverse_transform * point;
-        self.color_at(&local_point)
+        let pattern_point = &self.inverse_transform * local_point;
+        self.color_at(&pattern_point)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::matrix::Matrix;
     use crate::sphere::Sphere;
     use crate::tuple::point;
 
@@ -74,6 +88,15 @@ mod tests {
         let mut object: Shape = Sphere::new().into();
         object.set_transform(&Matrix::scaling(2.0, 2.0, 2.0));
         let pattern = StripePattern::new(Color::WHITE, Color::BLACK);
+        let c = pattern.color_at_object(&object, &point(1.5, 0.0, 0.0));
+        assert_eq!(c, Color::WHITE);
+    }
+
+    #[test]
+    fn test_stripes_with_a_pattern_transformation() {
+        let object: Shape = Sphere::new().into();
+        let mut pattern = StripePattern::new(Color::WHITE, Color::BLACK);
+        pattern.set_transform(&Matrix::scaling(2.0, 2.0, 2.0));
         let c = pattern.color_at_object(&object, &point(1.5, 0.0, 0.0));
         assert_eq!(c, Color::WHITE);
     }
