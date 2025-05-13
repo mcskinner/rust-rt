@@ -100,4 +100,14 @@ mod tests {
         let c = pattern.color_at_object(&object, &point(1.5, 0.0, 0.0));
         assert_eq!(c, Color::WHITE);
     }
+
+    #[test]
+    fn test_stripes_with_both_an_object_and_a_pattern_transformation() {
+        let mut object: Shape = Sphere::new().into();
+        object.set_transform(&Matrix::scaling(2.0, 2.0, 2.0));
+        let mut pattern = StripePattern::new(Color::WHITE, Color::BLACK);
+        pattern.set_transform(&Matrix::translation(0.5, 0.0, 0.0));
+        let c = pattern.color_at_object(&object, &point(2.5, 0.0, 0.0));
+        assert_eq!(c, Color::WHITE);
+    }
 }
