@@ -36,7 +36,7 @@ impl StripePattern {
         }
     }
 
-    fn color_at_object(&self, object: &Shape, point: &Tuple) -> Color {
+    pub fn color_at_object(&self, object: &Shape, point: &Tuple) -> Color {
         let local_point = &object.inverse_transform * point;
         let pattern_point = &self.inverse_transform * local_point;
         self.color_at(&pattern_point)

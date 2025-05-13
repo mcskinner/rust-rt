@@ -132,7 +132,7 @@ fn render_sphere() {
                 let position = ray.position(hit.t);
                 let normalv = s.normal_at(&position);
                 let eyev = (camera - position).normalize();
-                let color = m.lighting(&light, &position, &eyev, &normalv, false);
+                let color = m.lighting(hit.object, &light, &position, &eyev, &normalv, false);
                 c.write_pixel(x, y, color);
             }
         }

@@ -42,6 +42,7 @@ impl World {
         for light in &self.lights {
             color = color
                 + comps.object.material.lighting(
+                    comps.object,
                     light,
                     &comps.point,
                     &comps.eyev,

@@ -1,6 +1,7 @@
 use crate::color::Color;
 use crate::light::Light;
 use crate::pattern::StripePattern;
+use crate::shape::Shape;
 use crate::tuple::Tuple;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -70,6 +71,7 @@ impl Material {
 
     pub fn lighting(
         &self,
+        object: &Shape,
         light: &Light,
         position: &Tuple,
         eyev: &Tuple,
@@ -77,7 +79,7 @@ impl Material {
         in_shadow: bool,
     ) -> Color {
         let base_color = if let Some(pattern) = &self.pattern {
-            pattern.color_at(position)
+            pattern.color_at_object(object, position)
         } else {
             self.color
         };
@@ -108,6 +110,7 @@ impl Material {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::sphere::Sphere;
     use crate::tuple::{point, vector};
     use approx::assert_abs_diff_eq;
 
@@ -128,7 +131,14 @@ mod tests {
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::new(point(0.0, 0.0, -10.0), Color::WHITE);
-        let result = m.lighting(&light, &position, &eyev, &normalv, false);
+        let result = m.lighting(
+            &Sphere::new().into(),
+            &light,
+            &position,
+            &eyev,
+            &normalv,
+            false,
+        );
         assert_eq!(result, Color::new(1.9, 1.9, 1.9));
     }
 
@@ -143,7 +153,14 @@ mod tests {
         );
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::new(point(0.0, 0.0, -10.0), Color::WHITE);
-        let result = m.lighting(&light, &position, &eyev, &normalv, false);
+        let result = m.lighting(
+            &Sphere::new().into(),
+            &light,
+            &position,
+            &eyev,
+            &normalv,
+            false,
+        );
         assert_eq!(result, Color::WHITE);
     }
 
@@ -154,7 +171,14 @@ mod tests {
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::new(point(0.0, 10.0, -10.0), Color::WHITE);
-        let result = m.lighting(&light, &position, &eyev, &normalv, false);
+        let result = m.lighting(
+            &Sphere::new().into(),
+            &light,
+            &position,
+            &eyev,
+            &normalv,
+            false,
+        );
         assert_abs_diff_eq!(
             result,
             Color::new(0.7364, 0.7364, 0.7364),
@@ -173,7 +197,14 @@ mod tests {
         );
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::new(point(0.0, 10.0, -10.0), Color::WHITE);
-        let result = m.lighting(&light, &position, &eyev, &normalv, false);
+        let result = m.lighting(
+            &Sphere::new().into(),
+            &light,
+            &position,
+            &eyev,
+            &normalv,
+            false,
+        );
         assert_abs_diff_eq!(
             result,
             Color::new(1.6364, 1.6364, 1.6364),
@@ -188,7 +219,14 @@ mod tests {
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::new(point(0.0, 0.0, 10.0), Color::WHITE);
-        let result = m.lighting(&light, &position, &eyev, &normalv, false);
+        let result = m.lighting(
+            &Sphere::new().into(),
+            &light,
+            &position,
+            &eyev,
+            &normalv,
+            false,
+        );
         assert_eq!(result, Color::new(0.1, 0.1, 0.1));
     }
 
@@ -199,7 +237,14 @@ mod tests {
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::new(point(0.0, 0.0, -10.0), Color::WHITE);
-        let result = m.lighting(&light, &position, &eyev, &normalv, true);
+        let result = m.lighting(
+            &Sphere::new().into(),
+            &light,
+            &position,
+            &eyev,
+            &normalv,
+            true,
+        );
         assert_eq!(result, Color::new(0.1, 0.1, 0.1));
     }
 
@@ -216,8 +261,22 @@ mod tests {
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
         let light = Light::new(point(0.0, 0.0, -10.0), Color::WHITE);
-        let c1 = m.lighting(&light, &point(0.9, 0.0, 0.0), &eyev, &normalv, false);
-        let c2 = m.lighting(&light, &point(1.1, 0.0, 0.0), &eyev, &normalv, false);
+        let c1 = m.lighting(
+            &Sphere::new().into(),
+            &light,
+            &point(0.9, 0.0, 0.0),
+            &eyev,
+            &normalv,
+            false,
+        );
+        let c2 = m.lighting(
+            &Sphere::new().into(),
+            &light,
+            &point(1.1, 0.0, 0.0),
+            &eyev,
+            &normalv,
+            false,
+        );
         assert_eq!(c1, Color::WHITE);
         assert_eq!(c2, Color::BLACK);
     }
