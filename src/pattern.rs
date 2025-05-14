@@ -74,6 +74,26 @@ impl LocalPatternTrait for StripePattern {
     }
 }
 
+pub struct GradientPattern {
+    a: Color,
+    b: Color,
+}
+
+impl GradientPattern {
+    #[allow(dead_code)]
+    pub fn new(a: Color, b: Color) -> Self {
+        GradientPattern { a, b }
+    }
+}
+
+impl LocalPatternTrait for GradientPattern {
+    fn color_at(&self, point: &Tuple) -> Color {
+        let distance = self.b - self.a;
+        let fraction = point.x - point.x.floor();
+        self.a + distance * fraction
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -140,5 +160,26 @@ mod tests {
         pattern.set_transform(&Matrix::translation(0.5, 0.0, 0.0));
         let c = pattern.color_at_object(&object, &point(2.5, 0.0, 0.0));
         assert_eq!(c, Color::WHITE);
+    }
+
+    #[test]
+    fn test_gradient_pattern() {
+        let pattern = GradientPattern::new(Color::WHITE, Color::BLACK);
+        assert_eq!(
+            pattern.color_at(&point(0.0, 0.0, 0.0)),
+            Color::new(1.0, 1.0, 1.0)
+        );
+        assert_eq!(
+            pattern.color_at(&point(0.25, 0.0, 0.0)),
+            Color::new(0.75, 0.75, 0.75)
+        );
+        assert_eq!(
+            pattern.color_at(&point(0.5, 0.0, 0.0)),
+            Color::new(0.5, 0.5, 0.5)
+        );
+        assert_eq!(
+            pattern.color_at(&point(0.75, 0.0, 0.0)),
+            Color::new(0.25, 0.25, 0.25)
+        );
     }
 }
