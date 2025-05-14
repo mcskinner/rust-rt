@@ -19,6 +19,7 @@ use crate::color::Color;
 use crate::light::Light;
 use crate::material::Material;
 use crate::matrix::Matrix;
+use crate::pattern::CheckersPattern;
 use crate::plane::Plane;
 use crate::shape::Shape;
 use crate::sphere::Sphere;
@@ -144,7 +145,9 @@ fn render_sphere() {
 }
 
 fn render_chapter7_scene() {
-    let m = Material::new().with_rgb(1.0, 0.9, 0.9).with_specular(0.0);
+    let m = Material::new()
+        .with_pattern(&CheckersPattern::new(Color::BLACK, Color::WHITE).into())
+        .with_specular(0.0);
     let mut floor: Shape = Plane::new().into();
     floor.set_material(&m);
 

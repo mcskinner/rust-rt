@@ -40,7 +40,7 @@ impl Material {
     }
 
     #[allow(dead_code)]
-    fn with_pattern(mut self, new: &Pattern) -> Self {
+    pub fn with_pattern(mut self, new: &Pattern) -> Self {
         self.pattern = Some(new.clone());
         self
     }
