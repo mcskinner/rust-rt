@@ -1,13 +1,13 @@
 use crate::color::Color;
 use crate::light::Light;
-use crate::pattern::StripePattern;
+use crate::pattern::Pattern;
 use crate::shape::Shape;
 use crate::tuple::Tuple;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Material {
     color: Color,
-    pattern: Option<StripePattern>,
+    pattern: Option<Pattern>,
     ambient: f64,
     diffuse: f64,
     specular: f64,
@@ -40,7 +40,7 @@ impl Material {
     }
 
     #[allow(dead_code)]
-    fn with_pattern(mut self, new: StripePattern) -> Self {
+    fn with_pattern(mut self, new: &Pattern) -> Self {
         self.pattern = Some(new.clone());
         self
     }
@@ -110,6 +110,7 @@ impl Material {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::pattern::StripePattern;
     use crate::sphere::Sphere;
     use crate::tuple::{point, vector};
     use approx::assert_abs_diff_eq;
@@ -251,10 +252,7 @@ mod tests {
     #[test]
     fn test_lighting_with_a_pattern_applied() {
         let m = Material::new()
-            .with_pattern(StripePattern::new(
-                Color::new(1.0, 1.0, 1.0),
-                Color::new(0.0, 0.0, 0.0),
-            ))
+            .with_pattern(&StripePattern::new(Color::WHITE, Color::BLACK).into())
             .with_ambient(1.0)
             .with_diffuse(0.0)
             .with_specular(0.0);
