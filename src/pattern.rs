@@ -13,6 +13,9 @@ pub trait LocalPatternTrait {
 #[derive(Debug, Clone, PartialEq)]
 pub enum LocalPattern {
     Stripe(StripePattern),
+    Gradient(GradientPattern),
+    Ring(RingPattern),
+    Checkers(CheckersPattern),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -106,6 +109,28 @@ impl LocalPatternTrait for RingPattern {
     fn color_at(&self, point: &Tuple) -> Color {
         let distance = (point.x * point.x + point.z * point.z).sqrt();
         if distance.rem_euclid(2.0) < 1.0 {
+            self.a
+        } else {
+            self.b
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct CheckersPattern {
+    a: Color,
+    b: Color,
+}
+impl CheckersPattern {
+    #[allow(dead_code)]
+    pub fn new(a: Color, b: Color) -> Self {
+        CheckersPattern { a, b }
+    }
+}
+impl LocalPatternTrait for CheckersPattern {
+    fn color_at(&self, point: &Tuple) -> Color {
+        let total_val = point.x.floor() + point.y.floor() + point.z.floor();
+        if total_val.rem_euclid(2.0) < 1.0 {
             self.a
         } else {
             self.b
@@ -209,5 +234,29 @@ mod tests {
         assert_eq!(pattern.color_at(&point(1.0, 0.0, 0.0)), Color::BLACK);
         assert_eq!(pattern.color_at(&point(0.0, 0.0, 1.0)), Color::BLACK);
         assert_eq!(pattern.color_at(&point(0.708, 0.0, 0.708)), Color::BLACK);
+    }
+
+    #[test]
+    fn test_checkers_repeat_in_x() {
+        let pattern = CheckersPattern::new(Color::WHITE, Color::BLACK);
+        assert_eq!(pattern.color_at(&point(0.0, 0.0, 0.0)), Color::WHITE);
+        assert_eq!(pattern.color_at(&point(0.99, 0.0, 0.0)), Color::WHITE);
+        assert_eq!(pattern.color_at(&point(1.01, 0.0, 0.0)), Color::BLACK);
+    }
+
+    #[test]
+    fn test_checkers_repeat_in_y() {
+        let pattern = CheckersPattern::new(Color::WHITE, Color::BLACK);
+        assert_eq!(pattern.color_at(&point(0.0, 0.0, 0.0)), Color::WHITE);
+        assert_eq!(pattern.color_at(&point(0.0, 0.99, 0.0)), Color::WHITE);
+        assert_eq!(pattern.color_at(&point(0.0, 1.01, 0.0)), Color::BLACK);
+    }
+
+    #[test]
+    fn test_checkers_repeat_in_z() {
+        let pattern = CheckersPattern::new(Color::WHITE, Color::BLACK);
+        assert_eq!(pattern.color_at(&point(0.0, 0.0, 0.0)), Color::WHITE);
+        assert_eq!(pattern.color_at(&point(0.0, 0.0, 0.99)), Color::WHITE);
+        assert_eq!(pattern.color_at(&point(0.0, 0.0, 1.01)), Color::BLACK);
     }
 }
