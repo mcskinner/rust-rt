@@ -56,14 +56,12 @@ pub struct StripePattern {
     a: Color,
     b: Color,
 }
-
 impl StripePattern {
     #[allow(dead_code)]
     pub fn new(a: Color, b: Color) -> Self {
         StripePattern { a, b }
     }
 }
-
 impl LocalPatternTrait for StripePattern {
     fn color_at(&self, point: &Tuple) -> Color {
         if point.x.rem_euclid(2.0) < 1.0 {
@@ -74,23 +72,44 @@ impl LocalPatternTrait for StripePattern {
     }
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct GradientPattern {
     a: Color,
     b: Color,
 }
-
 impl GradientPattern {
     #[allow(dead_code)]
     pub fn new(a: Color, b: Color) -> Self {
         GradientPattern { a, b }
     }
 }
-
 impl LocalPatternTrait for GradientPattern {
     fn color_at(&self, point: &Tuple) -> Color {
         let distance = self.b - self.a;
         let fraction = point.x - point.x.floor();
         self.a + distance * fraction
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct RingPattern {
+    a: Color,
+    b: Color,
+}
+impl RingPattern {
+    #[allow(dead_code)]
+    pub fn new(a: Color, b: Color) -> Self {
+        RingPattern { a, b }
+    }
+}
+impl LocalPatternTrait for RingPattern {
+    fn color_at(&self, point: &Tuple) -> Color {
+        let distance = (point.x * point.x + point.z * point.z).sqrt();
+        if distance.rem_euclid(2.0) < 1.0 {
+            self.a
+        } else {
+            self.b
+        }
     }
 }
 
@@ -181,5 +200,14 @@ mod tests {
             pattern.color_at(&point(0.75, 0.0, 0.0)),
             Color::new(0.25, 0.25, 0.25)
         );
+    }
+
+    #[test]
+    fn test_ring_pattern() {
+        let pattern = RingPattern::new(Color::WHITE, Color::BLACK);
+        assert_eq!(pattern.color_at(&point(0.0, 0.0, 0.0)), Color::WHITE);
+        assert_eq!(pattern.color_at(&point(1.0, 0.0, 0.0)), Color::BLACK);
+        assert_eq!(pattern.color_at(&point(0.0, 0.0, 1.0)), Color::BLACK);
+        assert_eq!(pattern.color_at(&point(0.708, 0.0, 0.708)), Color::BLACK);
     }
 }
