@@ -65,6 +65,7 @@ impl Tuple {
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
+    use crate::consts::EPSILON;
     use approx::assert_abs_diff_eq;
 
     #[test]
@@ -242,6 +243,6 @@ mod tests {
             std::f64::consts::FRAC_1_SQRT_2,
             0.0,
         );
-        assert_abs_diff_eq!(v.reflect(&n), vector(1.0, 0.0, 0.0), epsilon = 1e-9);
+        assert_abs_diff_eq!(v.reflect(&n), vector(1.0, 0.0, 0.0), epsilon = EPSILON);
     }
 }

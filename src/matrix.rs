@@ -271,6 +271,7 @@ impl AbsDiffEq for Matrix {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::consts::EPSILON;
     use crate::tuple::{point, vector};
     use approx::assert_abs_diff_eq;
 
@@ -759,13 +760,13 @@ mod tests {
         let c = Matrix::translation(10.0, 5.0, 7.0);
 
         let p2 = a * p;
-        assert_abs_diff_eq!(p2, point(1.0, -1.0, 0.0), epsilon = 1e-9);
+        assert_abs_diff_eq!(p2, point(1.0, -1.0, 0.0), epsilon = EPSILON);
 
         let p3 = b * p2;
-        assert_abs_diff_eq!(p3, point(5.0, -5.0, 0.0), epsilon = 1e-9);
+        assert_abs_diff_eq!(p3, point(5.0, -5.0, 0.0), epsilon = EPSILON);
 
         let p4 = c * p3;
-        assert_abs_diff_eq!(p4, point(15.0, 0.0, 7.0), epsilon = 1e-9);
+        assert_abs_diff_eq!(p4, point(15.0, 0.0, 7.0), epsilon = EPSILON);
     }
 
     #[test]
@@ -776,7 +777,7 @@ mod tests {
         let c = Matrix::translation(10.0, 5.0, 7.0);
 
         let t = c * b * a;
-        assert_abs_diff_eq!(t * p, point(15.0, 0.0, 7.0), epsilon = 1e-9);
+        assert_abs_diff_eq!(t * p, point(15.0, 0.0, 7.0), epsilon = EPSILON);
     }
 
     #[test]

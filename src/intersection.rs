@@ -1,3 +1,6 @@
+use core::f64;
+
+use crate::consts::EPSILON;
 use crate::shape::Shape;
 use crate::tuple::Tuple;
 
@@ -22,7 +25,7 @@ impl Intersection<'_> {
         }
         Computations {
             object: self.object,
-            point: point + normalv * 1e-9,
+            point: point + normalv * EPSILON,
             eyev,
             normalv,
         }
@@ -137,7 +140,7 @@ mod tests {
         let i = Intersection::new(4.0, &s);
         let comps = i.prepare_computations(&r);
         assert_eq!(comps.object, i.object);
-        assert_abs_diff_eq!(comps.point, point(0.0, 0.0, -1.0), epsilon = 2.0 * 1e-9);
+        assert_abs_diff_eq!(comps.point, point(0.0, 0.0, -1.0), epsilon = 2.0 * EPSILON);
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
         assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
     }
@@ -148,7 +151,7 @@ mod tests {
         let shape = Sphere::new().into();
         let i = Intersection::new(4.0, &shape);
         let comps = i.prepare_computations(&r);
-        assert_abs_diff_eq!(comps.point, point(0.0, 0.0, -1.0), epsilon = 2.0 * 1e-9);
+        assert_abs_diff_eq!(comps.point, point(0.0, 0.0, -1.0), epsilon = 2.0 * EPSILON);
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
         assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
     }
@@ -159,7 +162,7 @@ mod tests {
         let shape = Sphere::new().into();
         let i = Intersection::new(1.0, &shape);
         let comps = i.prepare_computations(&r);
-        assert_abs_diff_eq!(comps.point, point(0.0, 0.0, 1.0), epsilon = 2.0 * 1e-9);
+        assert_abs_diff_eq!(comps.point, point(0.0, 0.0, 1.0), epsilon = 2.0 * EPSILON);
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
         assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
     }
@@ -171,7 +174,7 @@ mod tests {
         shape.set_transform(&Matrix::translation(0.0, 0.0, 1.0));
         let i = Intersection::new(5.0, &shape);
         let comps = i.prepare_computations(&r);
-        assert!(comps.point.z < -1e-9 / 2.0);
+        assert!(comps.point.z < -EPSILON / 2.0);
         assert!(comps.point.z > -3e-9 / 2.0);
     }
 }

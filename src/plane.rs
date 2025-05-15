@@ -1,5 +1,6 @@
 use approx_derive::AbsDiffEq;
 
+use crate::consts::EPSILON;
 use crate::ray::Ray;
 use crate::shape::HittableTrait;
 use crate::tuple::{Tuple, vector};
@@ -15,7 +16,7 @@ impl Plane {
 
 impl HittableTrait for Plane {
     fn local_intersect(&self, ray: &Ray) -> Vec<f64> {
-        if ray.direction.y.abs() < 1e-9 {
+        if ray.direction.y.abs() < EPSILON {
             return vec![];
         }
         vec![-ray.origin.y / ray.direction.y]
