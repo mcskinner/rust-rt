@@ -71,6 +71,10 @@ impl Material {
         self
     }
 
+    pub fn is_reflective(&self) -> bool {
+        self.reflective > 0.0
+    }
+
     pub fn lighting(
         &self,
         object: &Shape,

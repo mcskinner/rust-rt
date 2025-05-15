@@ -70,6 +70,14 @@ impl World {
             .hit()
             .is_some_and(|hit| hit.t < to_light.magnitude())
     }
+
+    fn reflected_color(&self, comps: &Computations<'_>) -> Color {
+        if comps.object.material.is_reflective() {
+            todo!("Implement reflection calculation");
+        } else {
+            Color::BLACK
+        }
+    }
 }
 
 #[cfg(test)]
@@ -249,5 +257,19 @@ mod tests {
         let comps = i.prepare_computations(&r);
         let c = w.shade_hit(&comps);
         assert_abs_diff_eq!(c, Color::new(0.1, 0.1, 0.1));
+    }
+
+    #[test]
+    fn test_reflected_color_for_a_nonreflective_material() {
+        let mut w = default_world();
+        let mut shape = w.objects[1].clone();
+        shape.set_material(&shape.material.clone().with_ambient(1.0));
+        w.objects[1] = shape;
+
+        let i = Intersection::new(1.0, &w.objects[1]);
+        let r = Ray::new(Tuple::ORIGIN, vector(0.0, 0.0, 1.0));
+        let comps = i.prepare_computations(&r);
+        let c = w.reflected_color(&comps);
+        assert_eq!(c, Color::BLACK);
     }
 }
