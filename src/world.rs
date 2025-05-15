@@ -1,4 +1,5 @@
 use crate::color::Color;
+use crate::consts::RECURSION_LIMIT;
 use crate::intersection::{Computations, Intersections};
 use crate::light::Light;
 use crate::ray::Ray;
@@ -37,8 +38,22 @@ impl World {
         Intersections::new(intersections)
     }
 
-    fn shade_hit(&self, comps: &Computations) -> Color {
-        let mut color = self.reflected_color(comps);
+    pub fn color_at(&self, r: &Ray) -> Color {
+        self.color_at_impl(r, RECURSION_LIMIT)
+    }
+
+    fn color_at_impl(&self, r: &Ray, recursion_limit: usize) -> Color {
+        let i = self.intersect(r);
+        if let Some(hit) = i.hit() {
+            let comps = hit.prepare_computations(r);
+            self.shade_hit(&comps, recursion_limit)
+        } else {
+            Color::BLACK
+        }
+    }
+
+    fn shade_hit(&self, comps: &Computations, recursion_limit: usize) -> Color {
+        let mut color = self.reflected_color(comps, recursion_limit);
         for light in &self.lights {
             color = color
                 + comps.object.material.lighting(
@@ -53,16 +68,6 @@ impl World {
         color
     }
 
-    pub fn color_at(&self, r: &Ray) -> Color {
-        let i = self.intersect(r);
-        if let Some(hit) = i.hit() {
-            let comps = hit.prepare_computations(r);
-            self.shade_hit(&comps)
-        } else {
-            Color::BLACK
-        }
-    }
-
     fn is_shadowed(&self, point: &Tuple, light: &Light) -> bool {
         let to_light = light.position - *point;
         let ray = Ray::new(*point, to_light.normalize());
@@ -71,10 +76,10 @@ impl World {
             .is_some_and(|hit| hit.t < to_light.magnitude())
     }
 
-    fn reflected_color(&self, comps: &Computations<'_>) -> Color {
-        if comps.object.material.reflective > 0.0 {
+    fn reflected_color(&self, comps: &Computations<'_>, recursion_limit: usize) -> Color {
+        if recursion_limit > 0 && comps.object.material.reflective > 0.0 {
             let r = Ray::new(comps.point, comps.reflectv);
-            self.color_at(&r) * comps.object.material.reflective
+            self.color_at_impl(&r, recursion_limit - 1) * comps.object.material.reflective
         } else {
             Color::BLACK
         }
@@ -163,7 +168,7 @@ mod tests {
         let shape = &w.objects[0];
         let i = Intersection::new(4.0, shape);
         let comps = i.prepare_computations(&r);
-        let c = w.shade_hit(&comps);
+        let c = w.shade_hit(&comps, RECURSION_LIMIT);
         assert_abs_diff_eq!(c, Color::new(0.38066, 0.47583, 0.2855), epsilon = 0.00001);
     }
 
@@ -175,7 +180,7 @@ mod tests {
         let shape = &w.objects[1];
         let i = Intersection::new(0.5, shape);
         let comps = i.prepare_computations(&r);
-        let c = w.shade_hit(&comps);
+        let c = w.shade_hit(&comps, RECURSION_LIMIT);
         assert_abs_diff_eq!(c, Color::new(0.90498, 0.90498, 0.90498), epsilon = 0.00001);
     }
 
@@ -259,7 +264,7 @@ mod tests {
         let r = Ray::new(point(0.0, 0.0, 5.0), vector(0.0, 0.0, 1.0));
         let i = Intersection::new(4.0, &w.objects[1]);
         let comps = i.prepare_computations(&r);
-        let c = w.shade_hit(&comps);
+        let c = w.shade_hit(&comps, RECURSION_LIMIT);
         assert_abs_diff_eq!(c, Color::new(0.1, 0.1, 0.1));
     }
 
@@ -273,7 +278,7 @@ mod tests {
         let r = Ray::new(Tuple::ORIGIN, vector(0.0, 0.0, 1.0));
         let i = Intersection::new(1.0, &w.objects[1]);
         let comps = i.prepare_computations(&r);
-        let c = w.reflected_color(&comps);
+        let c = w.reflected_color(&comps, RECURSION_LIMIT);
         assert_eq!(c, Color::BLACK);
     }
 
@@ -290,7 +295,7 @@ mod tests {
         );
         let i = Intersection::new(SQRT_2, &w.objects[2]);
         let comps = i.prepare_computations(&r);
-        let c = w.reflected_color(&comps);
+        let c = w.reflected_color(&comps, RECURSION_LIMIT);
         assert_abs_diff_eq!(c, Color::new(0.19033, 0.23791, 0.14275), epsilon = 0.00001);
     }
 
@@ -307,7 +312,29 @@ mod tests {
         );
         let i = Intersection::new(SQRT_2, &w.objects[2]);
         let comps = i.prepare_computations(&r);
-        let c = w.shade_hit(&comps);
+        let c = w.shade_hit(&comps, RECURSION_LIMIT);
         assert_abs_diff_eq!(c, Color::new(0.87676, 0.92434, 0.82917), epsilon = 0.00001);
+    }
+
+    #[test]
+    fn test_color_at_with_mutually_reflective_surfaces() {
+        let m = Material::new().with_reflective(1.0);
+        let mut lower: Shape = Plane::new().into();
+        lower
+            .set_material(&m)
+            .set_transform(&Matrix::translation(0.0, -1.0, 0.0));
+
+        let mut upper: Shape = Plane::new().into();
+        upper
+            .set_material(&m)
+            .set_transform(&Matrix::translation(0.0, 1.0, 0.0));
+
+        let w = World::new()
+            .add_object(lower)
+            .add_object(upper)
+            .add_light(Light::new(Tuple::ORIGIN, Color::WHITE));
+
+        let r = Ray::new(Tuple::ORIGIN, vector(0.0, 1.0, 0.0));
+        w.color_at(&r);
     }
 }
