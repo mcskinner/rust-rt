@@ -44,7 +44,7 @@ impl World {
                 + comps.object.material.lighting(
                     comps.object,
                     light,
-                    &comps.point,
+                    &comps.over_point,
                     &comps.eyev,
                     &comps.normalv,
                     self.is_shadowed(&comps.over_point, &light),
