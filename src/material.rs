@@ -12,6 +12,7 @@ pub struct Material {
     diffuse: f64,
     specular: f64,
     shininess: f64,
+    reflective: f64,
 }
 
 #[allow(dead_code)]
@@ -24,6 +25,7 @@ impl Material {
             diffuse: 0.9,
             specular: 0.9,
             shininess: 200.0,
+            reflective: 0.0,
         }
     }
 
@@ -277,5 +279,11 @@ mod tests {
         );
         assert_eq!(c1, Color::WHITE);
         assert_eq!(c2, Color::BLACK);
+    }
+
+    #[test]
+    fn test_reflectivity_for_the_default_material() {
+        let m = Material::new();
+        assert_eq!(m.reflective, 0.0);
     }
 }
