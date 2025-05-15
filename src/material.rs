@@ -12,7 +12,7 @@ pub struct Material {
     diffuse: f64,
     specular: f64,
     shininess: f64,
-    reflective: f64,
+    pub reflective: f64,
 }
 
 #[allow(dead_code)]
@@ -71,8 +71,10 @@ impl Material {
         self
     }
 
-    pub fn is_reflective(&self) -> bool {
-        self.reflective > 0.0
+    #[allow(dead_code)]
+    pub fn with_reflective(mut self, reflective: f64) -> Self {
+        self.reflective = reflective;
+        self
     }
 
     pub fn lighting(

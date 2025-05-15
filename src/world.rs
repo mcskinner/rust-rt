@@ -72,8 +72,9 @@ impl World {
     }
 
     fn reflected_color(&self, comps: &Computations<'_>) -> Color {
-        if comps.object.material.is_reflective() {
-            todo!("Implement reflection calculation");
+        if comps.object.material.reflective > 0.0 {
+            let r = Ray::new(comps.point, comps.reflectv);
+            self.color_at(&r) * comps.object.material.reflective
         } else {
             Color::BLACK
         }
@@ -82,10 +83,13 @@ impl World {
 
 #[cfg(test)]
 mod tests {
+    use std::f64::consts::{FRAC_1_SQRT_2, SQRT_2};
+
     use super::*;
     use crate::intersection::Intersection;
     use crate::material::Material;
     use crate::matrix::Matrix;
+    use crate::plane::Plane;
     use crate::sphere::Sphere;
     use crate::tuple::{point, vector};
     use approx::assert_abs_diff_eq;
@@ -266,10 +270,27 @@ mod tests {
         shape.set_material(&shape.material.clone().with_ambient(1.0));
         w.objects[1] = shape;
 
-        let i = Intersection::new(1.0, &w.objects[1]);
         let r = Ray::new(Tuple::ORIGIN, vector(0.0, 0.0, 1.0));
+        let i = Intersection::new(1.0, &w.objects[1]);
         let comps = i.prepare_computations(&r);
         let c = w.reflected_color(&comps);
         assert_eq!(c, Color::BLACK);
+    }
+
+    #[test]
+    fn test_reflected_color_for_a_reflective_material() {
+        let mut shape: Shape = Plane::new().into();
+        shape.set_material(&shape.material.clone().with_reflective(0.5));
+        shape.set_transform(&Matrix::translation(0.0, -1.0, 0.0));
+        let w = default_world().add_object(shape);
+
+        let r = Ray::new(
+            point(0.0, 0.0, -3.0),
+            vector(0.0, -FRAC_1_SQRT_2, FRAC_1_SQRT_2),
+        );
+        let i = Intersection::new(SQRT_2, &w.objects[2]);
+        let comps = i.prepare_computations(&r);
+        let c = w.reflected_color(&comps);
+        assert_abs_diff_eq!(c, Color::new(0.19033, 0.23791, 0.14275), epsilon = 0.00001);
     }
 }
