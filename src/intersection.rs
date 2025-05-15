@@ -28,6 +28,7 @@ impl Intersection<'_> {
             point: point + normalv * EPSILON,
             eyev,
             normalv,
+            reflectv: r.direction.reflect(&normalv),
         }
     }
 }
@@ -38,6 +39,7 @@ pub struct Computations<'a> {
     pub point: Tuple,
     pub eyev: Tuple,
     pub normalv: Tuple,
+    pub reflectv: Tuple,
 }
 
 pub struct Intersections<'a> {
@@ -67,10 +69,13 @@ impl<'a> Intersections<'a> {
 
 #[cfg(test)]
 mod tests {
+    use std::f64::consts::{FRAC_1_SQRT_2, SQRT_2};
+
     use approx::assert_abs_diff_eq;
 
     use super::*;
     use crate::matrix::Matrix;
+    use crate::plane::Plane;
     use crate::ray::Ray;
     use crate::sphere::Sphere;
     use crate::tuple::{point, vector};
@@ -176,5 +181,17 @@ mod tests {
         let comps = i.prepare_computations(&r);
         assert!(comps.point.z < -EPSILON / 2.0);
         assert!(comps.point.z > -3e-9 / 2.0);
+    }
+
+    #[test]
+    fn test_precomputing_the_reflection_vector() {
+        let r = Ray::new(
+            point(0.0, 1.0, -1.0),
+            vector(0.0, -FRAC_1_SQRT_2, FRAC_1_SQRT_2),
+        );
+        let shape = Plane::new().into();
+        let i = Intersection::new(SQRT_2, &shape);
+        let comps = i.prepare_computations(&r);
+        assert_eq!(comps.reflectv, vector(0.0, FRAC_1_SQRT_2, FRAC_1_SQRT_2));
     }
 }
