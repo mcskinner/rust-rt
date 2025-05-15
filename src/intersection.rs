@@ -20,13 +20,11 @@ impl Intersection<'_> {
         if inside {
             normalv = -normalv;
         }
-        let over_point = point + normalv * 1e-9;
         Computations {
             object: self.object,
-            point,
+            point: point + normalv * 1e-9,
             eyev,
             normalv,
-            over_point,
         }
     }
 }
@@ -37,7 +35,6 @@ pub struct Computations<'a> {
     pub point: Tuple,
     pub eyev: Tuple,
     pub normalv: Tuple,
-    pub over_point: Tuple,
 }
 
 pub struct Intersections<'a> {
@@ -67,6 +64,8 @@ impl<'a> Intersections<'a> {
 
 #[cfg(test)]
 mod tests {
+    use approx::assert_abs_diff_eq;
+
     use super::*;
     use crate::matrix::Matrix;
     use crate::ray::Ray;
@@ -138,7 +137,7 @@ mod tests {
         let i = Intersection::new(4.0, &s);
         let comps = i.prepare_computations(&r);
         assert_eq!(comps.object, i.object);
-        assert_eq!(comps.point, point(0.0, 0.0, -1.0));
+        assert_abs_diff_eq!(comps.point, point(0.0, 0.0, -1.0), epsilon = 2.0 * 1e-9);
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
         assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
     }
@@ -149,7 +148,7 @@ mod tests {
         let shape = Sphere::new().into();
         let i = Intersection::new(4.0, &shape);
         let comps = i.prepare_computations(&r);
-        assert_eq!(comps.point, point(0.0, 0.0, -1.0));
+        assert_abs_diff_eq!(comps.point, point(0.0, 0.0, -1.0), epsilon = 2.0 * 1e-9);
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
         assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
     }
@@ -160,7 +159,7 @@ mod tests {
         let shape = Sphere::new().into();
         let i = Intersection::new(1.0, &shape);
         let comps = i.prepare_computations(&r);
-        assert_eq!(comps.point, point(0.0, 0.0, 1.0));
+        assert_abs_diff_eq!(comps.point, point(0.0, 0.0, 1.0), epsilon = 2.0 * 1e-9);
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
         assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
     }
@@ -172,7 +171,7 @@ mod tests {
         shape.set_transform(&Matrix::translation(0.0, 0.0, 1.0));
         let i = Intersection::new(5.0, &shape);
         let comps = i.prepare_computations(&r);
-        assert!(comps.over_point.z < -1e-9 / 2.0);
-        assert!(comps.point.z > comps.over_point.z);
+        assert!(comps.point.z < -1e-9 / 2.0);
+        assert!(comps.point.z > -3e-9 / 2.0);
     }
 }
