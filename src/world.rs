@@ -38,7 +38,7 @@ impl World {
     }
 
     fn shade_hit(&self, comps: &Computations) -> Color {
-        let mut color = Color::BLACK;
+        let mut color = self.reflected_color(comps);
         for light in &self.lights {
             color = color
                 + comps.object.material.lighting(
@@ -292,5 +292,22 @@ mod tests {
         let comps = i.prepare_computations(&r);
         let c = w.reflected_color(&comps);
         assert_abs_diff_eq!(c, Color::new(0.19033, 0.23791, 0.14275), epsilon = 0.00001);
+    }
+
+    #[test]
+    fn test_shade_hit_with_a_reflective_material() {
+        let mut shape: Shape = Plane::new().into();
+        shape.set_material(&shape.material.clone().with_reflective(0.5));
+        shape.set_transform(&Matrix::translation(0.0, -1.0, 0.0));
+        let w = default_world().add_object(shape);
+
+        let r = Ray::new(
+            point(0.0, 0.0, -3.0),
+            vector(0.0, -FRAC_1_SQRT_2, FRAC_1_SQRT_2),
+        );
+        let i = Intersection::new(SQRT_2, &w.objects[2]);
+        let comps = i.prepare_computations(&r);
+        let c = w.shade_hit(&comps);
+        assert_abs_diff_eq!(c, Color::new(0.87676, 0.92434, 0.82917), epsilon = 0.00001);
     }
 }
