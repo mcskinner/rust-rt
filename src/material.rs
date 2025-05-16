@@ -1,13 +1,12 @@
 use crate::color::Color;
 use crate::light::Light;
-use crate::pattern::Pattern;
+use crate::pattern::{Pattern, SolidPattern};
 use crate::shape::Shape;
 use crate::tuple::Tuple;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Material {
-    color: Color,
-    pattern: Option<Pattern>,
+    pattern: Pattern,
     ambient: f64,
     diffuse: f64,
     specular: f64,
@@ -19,8 +18,7 @@ pub struct Material {
 impl Material {
     pub fn new() -> Material {
         Material {
-            color: Color::WHITE,
-            pattern: None,
+            pattern: SolidPattern::new(Color::WHITE).into(),
             ambient: 0.1,
             diffuse: 0.9,
             specular: 0.9,
@@ -30,20 +28,19 @@ impl Material {
     }
 
     #[allow(dead_code)]
-    pub fn with_rgb(mut self, r: f64, g: f64, b: f64) -> Self {
-        self.color = Color::new(r, g, b);
-        self
+    pub fn with_rgb(self, r: f64, g: f64, b: f64) -> Self {
+        self.with_color(Color::new(r, g, b))
     }
 
     #[allow(dead_code)]
     pub fn with_color(mut self, color: Color) -> Self {
-        self.color = color;
+        self.pattern = SolidPattern::new(color).into();
         self
     }
 
     #[allow(dead_code)]
     pub fn with_pattern(mut self, new: &Pattern) -> Self {
-        self.pattern = Some(new.clone());
+        self.pattern = new.clone();
         self
     }
 
@@ -86,12 +83,7 @@ impl Material {
         normalv: &Tuple,
         in_shadow: bool,
     ) -> Color {
-        let base_color = if let Some(pattern) = &self.pattern {
-            pattern.color_at_object(object, position)
-        } else {
-            self.color
-        };
-
+        let base_color = self.pattern.color_at_object(object, position);
         let effective_color = base_color * light.intensity;
         let lightv = (light.position - *position).normalize();
         let ambient = effective_color * self.ambient;
@@ -126,7 +118,7 @@ mod tests {
     #[test]
     fn test_the_default_material() {
         let m = Material::new();
-        assert_eq!(m.color, Color::WHITE);
+        assert_eq!(m.pattern, SolidPattern::new(Color::WHITE).into());
         assert_eq!(m.ambient, 0.1);
         assert_eq!(m.diffuse, 0.9);
         assert_eq!(m.specular, 0.9);

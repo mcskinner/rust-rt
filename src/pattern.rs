@@ -12,6 +12,7 @@ pub trait LocalPatternTrait {
 #[enum_dispatch(LocalPatternTrait)]
 #[derive(Debug, Clone, PartialEq)]
 pub enum LocalPattern {
+    Solid(SolidPattern),
     Stripe(StripePattern),
     Gradient(GradientPattern),
     Ring(RingPattern),
@@ -51,6 +52,22 @@ impl Pattern {
 impl<T: Into<LocalPattern>> From<T> for Pattern {
     fn from(local_pattern: T) -> Self {
         Pattern::new(local_pattern.into())
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct SolidPattern {
+    color: Color,
+}
+impl SolidPattern {
+    #[allow(dead_code)]
+    pub fn new(color: Color) -> Self {
+        SolidPattern { color }
+    }
+}
+impl LocalPatternTrait for SolidPattern {
+    fn color_at(&self, _point: &Tuple) -> Color {
+        self.color
     }
 }
 
