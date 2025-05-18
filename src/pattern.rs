@@ -73,21 +73,24 @@ impl LocalPatternTrait for SolidPattern {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct StripePattern {
-    a: Color,
-    b: Color,
+    a: Box<LocalPattern>,
+    b: Box<LocalPattern>,
 }
 impl StripePattern {
     #[allow(dead_code)]
     pub fn new(a: Color, b: Color) -> Self {
-        StripePattern { a, b }
+        StripePattern {
+            a: Box::new(SolidPattern::new(a).into()),
+            b: Box::new(SolidPattern::new(b).into()),
+        }
     }
 }
 impl LocalPatternTrait for StripePattern {
     fn color_at(&self, point: &Tuple) -> Color {
         if point.x.rem_euclid(2.0) < 1.0 {
-            self.a
+            self.a.color_at(point)
         } else {
-            self.b
+            self.b.color_at(point)
         }
     }
 }
@@ -164,8 +167,8 @@ mod tests {
     #[test]
     fn test_creating_a_stripe_pattern() {
         let pattern = StripePattern::new(Color::WHITE, Color::BLACK);
-        assert_eq!(pattern.a, Color::WHITE);
-        assert_eq!(pattern.b, Color::BLACK);
+        assert_eq!(pattern.a, Box::new(SolidPattern::new(Color::WHITE).into()));
+        assert_eq!(pattern.b, Box::new(SolidPattern::new(Color::BLACK).into()));
     }
 
     #[test]
