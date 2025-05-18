@@ -33,7 +33,6 @@ impl Intersection<'_> {
     }
 }
 
-#[allow(dead_code)]
 pub struct Computations<'a> {
     pub object: &'a Shape,
     pub point: Tuple,

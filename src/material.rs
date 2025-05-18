@@ -14,7 +14,6 @@ pub struct Material {
     pub reflective: f64,
 }
 
-#[allow(dead_code)]
 impl Material {
     pub fn new() -> Material {
         Material {
