@@ -35,7 +35,6 @@ impl Pattern {
         }
     }
 
-    #[allow(dead_code)]
     pub fn set_transform(&mut self, transform: &Matrix) -> &mut Self {
         self.transform = transform.clone();
         self.inverse_transform = transform.inverse();
@@ -64,7 +63,6 @@ pub struct SolidPattern {
     color: Color,
 }
 impl SolidPattern {
-    #[allow(dead_code)]
     pub fn new(color: Color) -> Self {
         SolidPattern { color }
     }
@@ -88,7 +86,6 @@ impl StripePattern {
         }
     }
 
-    #[allow(dead_code)]
     pub fn from_colors(a: Color, b: Color) -> Self {
         Self::new(SolidPattern::new(a).into(), SolidPattern::new(b).into())
     }
