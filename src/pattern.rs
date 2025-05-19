@@ -121,44 +121,58 @@ impl LocalPatternTrait for GradientPattern {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct RingPattern {
-    a: Color,
-    b: Color,
+    a: Box<Pattern>,
+    b: Box<Pattern>,
 }
 impl RingPattern {
+    pub fn new(a: Pattern, b: Pattern) -> Self {
+        RingPattern {
+            a: Box::new(a),
+            b: Box::new(b),
+        }
+    }
+
     #[allow(dead_code)]
-    pub fn new(a: Color, b: Color) -> Self {
-        RingPattern { a, b }
+    pub fn from_colors(a: Color, b: Color) -> Self {
+        RingPattern::new(SolidPattern::new(a).into(), SolidPattern::new(b).into())
     }
 }
 impl LocalPatternTrait for RingPattern {
     fn color_at(&self, point: &Tuple) -> Color {
         let distance = (point.x * point.x + point.z * point.z).sqrt();
         if distance.rem_euclid(2.0) < 1.0 {
-            self.a
+            self.a.color_at_pattern(point)
         } else {
-            self.b
+            self.b.color_at_pattern(point)
         }
     }
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct CheckersPattern {
-    a: Color,
-    b: Color,
+    a: Box<Pattern>,
+    b: Box<Pattern>,
 }
 impl CheckersPattern {
+    pub fn new(a: Pattern, b: Pattern) -> Self {
+        CheckersPattern {
+            a: Box::new(a),
+            b: Box::new(b),
+        }
+    }
+
     #[allow(dead_code)]
-    pub fn new(a: Color, b: Color) -> Self {
-        CheckersPattern { a, b }
+    pub fn from_colors(a: Color, b: Color) -> Self {
+        CheckersPattern::new(SolidPattern::new(a).into(), SolidPattern::new(b).into())
     }
 }
 impl LocalPatternTrait for CheckersPattern {
     fn color_at(&self, point: &Tuple) -> Color {
         let total_val = point.x.floor() + point.y.floor() + point.z.floor();
         if total_val.rem_euclid(2.0) < 1.0 {
-            self.a
+            self.a.color_at_pattern(point)
         } else {
-            self.b
+            self.b.color_at_pattern(point)
         }
     }
 }
@@ -254,7 +268,7 @@ mod tests {
 
     #[test]
     fn test_ring_pattern() {
-        let pattern = RingPattern::new(Color::WHITE, Color::BLACK);
+        let pattern = RingPattern::from_colors(Color::WHITE, Color::BLACK);
         assert_eq!(pattern.color_at(&point(0.0, 0.0, 0.0)), Color::WHITE);
         assert_eq!(pattern.color_at(&point(1.0, 0.0, 0.0)), Color::BLACK);
         assert_eq!(pattern.color_at(&point(0.0, 0.0, 1.0)), Color::BLACK);
@@ -263,7 +277,7 @@ mod tests {
 
     #[test]
     fn test_checkers_repeat_in_x() {
-        let pattern = CheckersPattern::new(Color::WHITE, Color::BLACK);
+        let pattern = CheckersPattern::from_colors(Color::WHITE, Color::BLACK);
         assert_eq!(pattern.color_at(&point(0.0, 0.0, 0.0)), Color::WHITE);
         assert_eq!(pattern.color_at(&point(0.99, 0.0, 0.0)), Color::WHITE);
         assert_eq!(pattern.color_at(&point(1.01, 0.0, 0.0)), Color::BLACK);
@@ -271,7 +285,7 @@ mod tests {
 
     #[test]
     fn test_checkers_repeat_in_y() {
-        let pattern = CheckersPattern::new(Color::WHITE, Color::BLACK);
+        let pattern = CheckersPattern::from_colors(Color::WHITE, Color::BLACK);
         assert_eq!(pattern.color_at(&point(0.0, 0.0, 0.0)), Color::WHITE);
         assert_eq!(pattern.color_at(&point(0.0, 0.99, 0.0)), Color::WHITE);
         assert_eq!(pattern.color_at(&point(0.0, 1.01, 0.0)), Color::BLACK);
@@ -279,7 +293,7 @@ mod tests {
 
     #[test]
     fn test_checkers_repeat_in_z() {
-        let pattern = CheckersPattern::new(Color::WHITE, Color::BLACK);
+        let pattern = CheckersPattern::from_colors(Color::WHITE, Color::BLACK);
         assert_eq!(pattern.color_at(&point(0.0, 0.0, 0.0)), Color::WHITE);
         assert_eq!(pattern.color_at(&point(0.0, 0.0, 0.99)), Color::WHITE);
         assert_eq!(pattern.color_at(&point(0.0, 0.0, 1.01)), Color::BLACK);
