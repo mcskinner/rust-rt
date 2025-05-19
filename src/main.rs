@@ -20,7 +20,7 @@ use crate::color::Color;
 use crate::light::Light;
 use crate::material::Material;
 use crate::matrix::Matrix;
-use crate::pattern::CheckersPattern;
+use crate::pattern::{Pattern, StripePattern};
 use crate::plane::Plane;
 use crate::shape::Shape;
 use crate::sphere::Sphere;
@@ -146,8 +146,14 @@ fn render_sphere() {
 }
 
 fn render_chapter7_scene() {
+    let mut zig: Pattern = StripePattern::from_colors(Color::WHITE, Color::BLACK).into();
+    zig.set_transform(&(Matrix::scaling(0.1, 0.1, 0.1) * Matrix::rotation_y(FRAC_PI_4)));
+
+    let mut zag: Pattern = StripePattern::from_colors(Color::WHITE, Color::BLACK).into();
+    zag.set_transform(&(Matrix::scaling(0.1, 0.1, 0.1) * Matrix::rotation_y(-FRAC_PI_4)));
+
     let m = Material::new()
-        .with_pattern(&CheckersPattern::new(Color::BLACK, Color::WHITE).into())
+        .with_pattern(&StripePattern::new(zig, zag).into())
         .with_specular(0.0);
     let mut floor: Shape = Plane::new().into();
     floor.set_material(&m);

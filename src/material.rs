@@ -251,7 +251,7 @@ mod tests {
     #[test]
     fn test_lighting_with_a_pattern_applied() {
         let m = Material::new()
-            .with_pattern(&StripePattern::new(Color::WHITE, Color::BLACK).into())
+            .with_pattern(&StripePattern::from_colors(Color::WHITE, Color::BLACK).into())
             .with_ambient(1.0)
             .with_diffuse(0.0)
             .with_specular(0.0);
