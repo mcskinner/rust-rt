@@ -157,3 +157,25 @@ I tried to get rid of some duplication, both using template parameters and `Box<
 With template parameters, it wanted me to implement for every subtype. I couldn't figure out the generic logic. Re-read my reference though and might try that again.
 
 For `Box` the blocker was all the `derive`'d functionality, like `Debug` and `Clone` which are used somewhat extensively. That seems like a lot to sacrifice for a not-technically-required open-closed implementation.
+
+# Chapter 10
+
+### Recursive types for patterns
+
+How do you make a stripe or checkered pattern that can contain other patterns, which themselves might also be stripes or checkers?
+
+Getting the solid color and making every `Material` take a `Pattern` was easy. And nice, because it removed some if/else logic around the solid color special case?
+
+But for stripes? That stumped me for awhile.
+
+My first attempt was to nest do a simple replace of `Color` with `Pattern` in that type too. No dice. Rust inlines the nested structs, which happens recursively in this case and creates an infinite sized type.
+
+So then I tried to go with a `Box<dyn LocalPatternTrait>` since that's the other pattern I'd seen online. I got a bunch of warnings about `Debug` and `Clone` and such not being derivable, but then figured out how to add that as a type constraint on the trait. Then more trouble, `LocalPatternTrait` can't by dynamic because it returns references to `Self` as part of a builder'ish pattern.
+
+After more reading, I learned that you can also box normal types, not just dynamic traits. So I tried `Box<Pattern>` and it finally worked out. No more infinite type sizes. No more complaints about `dyn` incompatibility. Just a bit of extra boilerplate to manage the boxing.
+
+### Nested pattern transformations
+
+Just when I thought I was done, one more wrinkle. I got all the type stuff out of the way, but the patterns were calling the nested `color_at` pattern which is after both the object and the pattern transformations. Nested patterns are not very interesting if you can't independently translate them, e.g. by rotating the nested patterns.
+
+The fix took a bit to think of, but in the end was easy. Put a new private method on the `Pattern` wrapper to `color_at_pattern` and separate out that transformation from the world-to-object transformation. Then the implementations that support nesting can call that instead of the innermost `color_at`. Of course `color_at_object` would never have worked because it would have repeatedly applied the world-to-object transformation.
